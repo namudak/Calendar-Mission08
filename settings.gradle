@@ -1,2 +1,2 @@
 include ':caldroid'
-include ':caldroidSampleActivity'
+include ':Mission08Activity'
