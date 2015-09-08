@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,11 +17,12 @@ import java.util.List;
 public class TodoListAdapter extends BaseAdapter {
     private final Context mContext;
     private List<Todo> mData;
+    private Date mSelectedDate;
 
 
     public TodoListAdapter(Context context, List<Todo> mData) {
         mContext= context;
-        this.mData = mData;
+        this.mData= mData;
     }
     @Override
     public int getCount() { return mData.size(); }
@@ -32,6 +35,8 @@ public class TodoListAdapter extends BaseAdapter {
         return position;
     }
 
+    public void setDate(Date date){mSelectedDate= date;}
+
     /**
      * Item's layout
      * @param position
@@ -41,7 +46,10 @@ public class TodoListAdapter extends BaseAdapter {
      */
 
     public View getView(int position, View convertView, ViewGroup parent) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
         ViewHolder viewHolder;
+        String TIMEFORMAT= "%5s시:%5s분";
+        String TODOFORMST= "[%s]";
 
         // Layout compose
         // convertView first loaded
@@ -49,13 +57,11 @@ public class TodoListAdapter extends BaseAdapter {
             convertView= LayoutInflater.from(
                     mContext).inflate(R.layout.todo_listview, parent, false);
 
-            TextView yearmonth= (TextView)convertView.findViewById(R.id.yearmonth_text_view);
             TextView time= (TextView)convertView.findViewById(R.id.time_text_view);
             TextView todo= (TextView)convertView.findViewById(R.id.todo_text_view);
 
             Todo todothings= (Todo)getItem(position);
             viewHolder= new ViewHolder();
-            viewHolder.yearmonth= yearmonth;
             viewHolder.time= time;
             viewHolder.todo= todo;
 
@@ -67,16 +73,21 @@ public class TodoListAdapter extends BaseAdapter {
 
         // Bind data to Layout
         Todo todothings= (Todo)getItem(position);
-        viewHolder.yearmonth.setText(todothings.getYearMonth());
-        viewHolder.time.setText(todothings.getHour()+ ":"+ todothings.getMin());
-        viewHolder.todo.setText(todothings.getTodo());
+        if(mSelectedDate.equals(todothings.getDate())) {
+            viewHolder.time.setText(
+                    String.format(TIMEFORMAT, todothings.getHour(), todothings.getMin()));
+            viewHolder.todo.setText(
+                    String.format(TODOFORMST, todothings.getTodo()));
+        } else {
+            viewHolder.time.setText(null);
+            viewHolder.todo.setText(null);
+        }
 
         // Return view
         return convertView;
     }
     // Inner class by static
     static class ViewHolder {
-        TextView yearmonth;
         TextView time;
         TextView todo;
     }

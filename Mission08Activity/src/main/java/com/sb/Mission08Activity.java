@@ -32,36 +32,40 @@ public class Mission08Activity extends AppCompatActivity
     private ListView mTodoListView;
     private TodoListAdapter mTodoAdapter;
 
-    private String mCurYear, mCurMonth, mCurDate;
+    private Date mDate;
 
     private void setCustomResourceForDates() {
         Calendar cal = Calendar.getInstance();
 
-        // Min date is last 7 days
-        cal.add(Calendar.DATE, -7);
-        Date blueDate = cal.getTime();
-
-        // Max date is next 7 days
-        cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, 7);
-        Date greenDate = cal.getTime();
+//        int startDay= cal.get(cal.DAY_OF_WEEK);
+//        int lastDay= cal.getActualMaximum(cal.DATE);
+//        for(int i= startDay; i< lastDay; i+= 7){
+//            cal.add(cal.DATE, (7- i% 7));
+//            Date blueDate = cal.getTime();
+//            caldroidFragment.setTextColorForDate(R.color.blue, blueDate);
+//        }
+//        // Min date is last 7 days
+//        cal.add(Calendar.DATE, -7);cal.get
+//        Date blueDate = cal.getTime();
+//
+//        // Max date is next 7 days
+//        cal = Calendar.getInstance();
+//        cal.add(Calendar.DATE, 7);
+//        Date greenDate = cal.getTime();
 
         if (caldroidFragment != null) {
-            caldroidFragment.setBackgroundResourceForDate(R.color.blue,
-                    blueDate);
-            caldroidFragment.setBackgroundResourceForDate(R.color.green,
-                    greenDate);
-            caldroidFragment.setTextColorForDate(R.color.white, blueDate);
-            caldroidFragment.setTextColorForDate(R.color.white, greenDate);
+//            caldroidFragment.setBackgroundResourceForDate(R.color.blue,
+//                    blueDate);
+//            caldroidFragment.setBackgroundResourceForDate(R.color.green,
+//                    greenDate);
+//            caldroidFragment.setTextColorForDate(R.color.white, blueDate);
+//            caldroidFragment.setTextColorForDate(R.color.white, greenDate);
 
             // Initialize calendar
             caldroidFragment.clearDisableDates();
             caldroidFragment.clearSelectedDates();
             caldroidFragment.setMinDate(null);
             caldroidFragment.setMaxDate(null);
-//            caldroidFragment.setShowNavigationArrows(true);
-//            caldroidFragment.setEnableSwipe(true);
-
             caldroidFragment.refreshView();
         }
 
@@ -73,7 +77,7 @@ public class Mission08Activity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
 
         // Setup caldroid fragment
         // **** If you want normal CaldroidFragment, use below line ****
@@ -85,7 +89,6 @@ public class Mission08Activity extends AppCompatActivity
 //		 caldroidFragment = new CaldroidSampleCustomFragment();//
 
         // Setup arguments
-
         // If Activity is created after rotation
         if (savedInstanceState != null) {
             caldroidFragment.restoreStatesFromKey(savedInstanceState,
@@ -126,36 +129,29 @@ public class Mission08Activity extends AppCompatActivity
 
             @Override
             public void onSelectDate(Date date, View view) {
-                String[] str= formatter.format(date).split(" ");
-                Toast.makeText(getApplicationContext(), formatter.format(date),
-                        Toast.LENGTH_SHORT).show();
-
-
-                caldroidFragment.setBackgroundResourceForDate(R.color.caldroid_sky_blue, date);
-                caldroidFragment.refreshView();
+//                Toast.makeText(getApplicationContext(), formatter.format(date),
+//                        Toast.LENGTH_SHORT).show();
 
                 // Set member fileds as selected date
-                mCurDate= str[0]+ "일";
-                mCurMonth= str[1];
-                mCurYear= str[2]+ "년";
-                // Show dialog for todo data input
-                FragmentManager fm= getSupportFragmentManager();
-                DialogFragment todoDialogFragment = new TodoDialogFragment();
-                todoDialogFragment.show(fm, "Todo Dialog");
+                mDate= date;
+
+                // Refresh listview data
+                mTodoAdapter.setDate(mDate);
+                mTodoAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChangeMonth(int month, int year) {
-                String text = "month: " + month + " year: " + year;
-                Toast.makeText(getApplicationContext(), text,
-                        Toast.LENGTH_SHORT).show();
+//                String text = "month: " + month + " year: " + year;
+//                Toast.makeText(getApplicationContext(), text,
+//                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onLongClickDate(Date date, View view) {
-                Toast.makeText(getApplicationContext(),
-                        "Long click " + formatter.format(date),
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),
+//                        "Long click " + formatter.format(date),
+//                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -181,6 +177,13 @@ public class Mission08Activity extends AppCompatActivity
         mTodoListView.setAdapter((TodoListAdapter)mTodoAdapter);
     }
 
+    private void showDialog() {
+        // Show dialog for todo data input
+        FragmentManager fm= getSupportFragmentManager();
+        DialogFragment todoDialogFragment = new TodoDialogFragment();
+        todoDialogFragment.show(fm, "Todo Dialog");
+    }
+
     /**
      * Save current states of the Caldroid here
      */
@@ -192,7 +195,6 @@ public class Mission08Activity extends AppCompatActivity
         if (caldroidFragment != null) {
             caldroidFragment.saveStatesToKey(outState, "CALDROID_SAVED_STATE");
         }
-
     }
 
     @Override
@@ -213,9 +215,8 @@ public class Mission08Activity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         } else if(id== R.id.action_add_todo){
-            FragmentManager fm= getSupportFragmentManager();
-            DialogFragment todoDialogFragment = new TodoDialogFragment();
-            todoDialogFragment.show(fm, "Todo Dialog");
+            // Show input dialog
+            showDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -225,10 +226,14 @@ public class Mission08Activity extends AppCompatActivity
     @Override
     public void onTodoDialogClick(DialogFragment dialog, String result) {
         String[] str= result.split(",");
-        Todo todo= new Todo(mCurYear+ mCurMonth+ mCurDate,
-                str[0]+ "시", str[1]+ "분", "["+ str[2]+ "]");
+        // Todo hour, min, todo content
+        Todo todo= new Todo(mDate, str[0], str[1], str[2]);
         mData.add(todo);
+
         // Refresh listview data
         mTodoAdapter.notifyDataSetChanged();
+        // Set cell's color as selected
+        caldroidFragment.setBackgroundResourceForDate(R.color.caldroid_light_red, mDate);
+        caldroidFragment.refreshView();
     }
 }
