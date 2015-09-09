@@ -8,40 +8,34 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2015-09-06.
  */
 public class TodoListAdapter extends BaseAdapter {
+    final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
     private final Context mContext;
-    private Map<Date, List<Todo>> mData;
-    private List<Todo> mTodos;
-    private Date mSelectedDate;
+    private List<Todo> mData= new ArrayList<>();
+    private Date mDate;
 
-
-    public TodoListAdapter(Context context, Map<Date, List<Todo>> data) {
-        mContext= context;
+    public TodoListAdapter(Context context, List<Todo> data) {
+        this.mContext= context;
         this.mData= data;
     }
     @Override
-    public int getCount() { return mTodos.size(); }
+    public int getCount() {
+        return mData.size(); }
     @Override
-    public Object getItem(int position) {
-        return mTodos.get(position);
-    }
+    public Object getItem(int position) { return position; }
     @Override
-    public long getItemId(int position) {
-        return position;
-    }
+    public long getItemId(int position) { return position; }
 
-    public void setDate(Date date){
-        mSelectedDate= date;
-        //if(mData!= null) mTodos= mData.get(mSelectedDate);
+    public void setDate(Date date) {
+        mDate= date;
     }
-
     /**
      * Item's layout
      * @param position
@@ -51,10 +45,12 @@ public class TodoListAdapter extends BaseAdapter {
      */
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
-        ViewHolder viewHolder= null;
         String TIMEFORMAT= "%5s시:%5s분";
         String TODOFORMST= "[%s]";
+
+        ViewHolder viewHolder= null;
+
+
 
         // Layout compose
         // convertView first loaded
@@ -65,9 +61,6 @@ public class TodoListAdapter extends BaseAdapter {
             TextView time= (TextView)convertView.findViewById(R.id.time_text_view);
             TextView todo= (TextView)convertView.findViewById(R.id.todo_text_view);
 
-            List<Todo> dateTodo= mData.get(mSelectedDate);
-
-            Todo todothings= (Todo)getItem(position);
             viewHolder= new ViewHolder();
             viewHolder.time= time;
             viewHolder.todo= todo;
@@ -80,15 +73,30 @@ public class TodoListAdapter extends BaseAdapter {
         }
 
         // Bind data to Layout
-        Todo todothings= (Todo) getItem(position);
-        if(mSelectedDate.equals(todothings.getDate())) {
+//        List<Todo> todothings= mData.get(formatter.format(mDate));
+//        if(todothings!= null) {
+//            for (int i = 0; i < todothings.size(); i++) {
+//                viewHolder.time.setText(
+//                        String.format(TIMEFORMAT,
+//                                todothings.get(i).getHour(), todothings.get(i).getMin()));
+//                viewHolder.todo.setText(
+//                        String.format(TODOFORMST, todothings.get(i).getTodo()));
+//            }
+//        } else {
+//            viewHolder.time.setText("");
+//            viewHolder.todo.setText("");
+//        }
+
+        Todo todothings= mData.get(position);
+        if(todothings!= null){
             viewHolder.time.setText(
-                    String.format(TIMEFORMAT, todothings.getHour(), todothings.getMin()));
+                    String.format(TIMEFORMAT,
+                            todothings.getHour(), todothings.getMin()));
             viewHolder.todo.setText(
                     String.format(TODOFORMST, todothings.getTodo()));
         } else {
-            viewHolder.time.setText(null);
-            viewHolder.todo.setText(null);
+            viewHolder.time.setText("");
+            viewHolder.todo.setText("");
         }
 
         // Return view

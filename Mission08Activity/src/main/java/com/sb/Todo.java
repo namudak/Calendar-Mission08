@@ -24,7 +24,7 @@ public class Todo {
     public String getMin() {return min;}
     public String getTodo() {return todo;}
 
-    public void setDate(String yearmonth){this.date= date;}
+    public void setDate(Date date){this.date= date;}
     public void setHour(String hour) {this.hour= hour;}
     public void setMin(String min) {this.min= min;}
     public void setTodo(String todo) {this.todo= todo;}

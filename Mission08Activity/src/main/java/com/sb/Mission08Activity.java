@@ -30,7 +30,7 @@ public class Mission08Activity extends AppCompatActivity
 
     private CaldroidFragment caldroidFragment;
 
-    private Map<Date, List<Todo>> mData;
+    private Map<String, List<Todo>> mData;
     private List<Todo> mTodos;
 
     private ListView mTodoListView;
@@ -38,21 +38,16 @@ public class Mission08Activity extends AppCompatActivity
 
     private Date mDate;
 
+    final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
-
         // Setup caldroid fragment
         // **** If you want normal CaldroidFragment, use below line ****
         caldroidFragment = new CaldroidFragment();
-
-        // //////////////////////////////////////////////////////////////////////
-        // **** This is to show customized fragment. If you want customized
-        // version, uncomment below line ****
-//		 caldroidFragment = new CaldroidSampleCustomFragment();//
 
         // Setup arguments
         // If Activity is created after rotation
@@ -69,13 +64,6 @@ public class Mission08Activity extends AppCompatActivity
             args.putInt(CaldroidFragment.YEAR, cal.get(Calendar.YEAR));
             args.putBoolean(CaldroidFragment.ENABLE_SWIPE, true);
             args.putBoolean(CaldroidFragment.SIX_WEEKS_IN_CALENDAR, true);
-
-            // Uncomment this to customize startDayOfWeek
-            // args.putInt(CaldroidFragment.START_DAY_OF_WEEK,
-            // CaldroidFragment.TUESDAY); // Tuesday
-
-            // Uncomment this line to use Caldroid in compact mode
-            // args.putBoolean(CaldroidFragment.SQUARE_TEXT_VIEW_CELL, false);
 
             // Uncomment this line to use dark theme
             args.putInt(CaldroidFragment.THEME_RESOURCE, com.caldroid.R.style.CaldroidDefaultDark);//
@@ -109,8 +97,7 @@ public class Mission08Activity extends AppCompatActivity
             }
 
             @Override
-            public void onLongClickDate(Date date, View view) {
-            }
+            public void onLongClickDate(Date date, View view) { }
 
             @Override
             public void onCaldroidViewCreated() {
@@ -131,9 +118,11 @@ public class Mission08Activity extends AppCompatActivity
         mTodos= new ArrayList<>();
 
         mTodoListView= (ListView)findViewById(R.id.todo_list_view);
-        mTodoAdapter= new TodoListAdapter(getApplicationContext(), mData);
+        mTodoAdapter= new TodoListAdapter(getApplicationContext(),
+                (List<Todo>)mData.get(formatter.format(mDate)));
 
-        mTodoListView.setAdapter((TodoListAdapter)mTodoAdapter);
+        mTodoListView.setAdapter((TodoListAdapter) mTodoAdapter);
+
     }
 
     private void setWeekEndColor(int month, int year) {
@@ -163,9 +152,8 @@ public class Mission08Activity extends AppCompatActivity
             caldroidFragment.setMaxDate(null);
             caldroidFragment.refreshView();
         }
-
-        // Default calender color for saturday and sunday
-        //setWeekEndColor(cal.YEAR, cal.MONTH- 1);
+        // Default as today
+        mDate= cal.getTime();
 
     }
 
@@ -220,9 +208,15 @@ public class Mission08Activity extends AppCompatActivity
         String[] str= result.split(",");
         // Todo hour, min, todo content
         Todo todo= new Todo(mDate, str[0], str[1], str[2]);
-
-        mTodos.add(todo);
-        mData.put(mDate, mTodos);
+        // No todo at this date
+        if(mData.get(formatter.format(mDate))== null){
+            mTodos= new ArrayList<>();
+            mTodos.add(todo);
+        } else {
+            mTodos= mData.get(formatter.format(mDate));
+            mTodos.add(todo);
+        }
+        mData.put(formatter.format(mDate), mTodos);
 
         // Refresh listview data
         mTodoAdapter.notifyDataSetChanged();
