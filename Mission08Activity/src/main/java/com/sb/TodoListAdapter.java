@@ -10,32 +10,37 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2015-09-06.
  */
 public class TodoListAdapter extends BaseAdapter {
     private final Context mContext;
-    private List<Todo> mData;
+    private Map<Date, List<Todo>> mData;
+    private List<Todo> mTodos;
     private Date mSelectedDate;
 
 
-    public TodoListAdapter(Context context, List<Todo> mData) {
+    public TodoListAdapter(Context context, Map<Date, List<Todo>> data) {
         mContext= context;
-        this.mData= mData;
+        this.mData= data;
     }
     @Override
-    public int getCount() { return mData.size(); }
+    public int getCount() { return mTodos.size(); }
     @Override
     public Object getItem(int position) {
-        return mData.get(position);
+        return mTodos.get(position);
     }
     @Override
     public long getItemId(int position) {
         return position;
     }
 
-    public void setDate(Date date){mSelectedDate= date;}
+    public void setDate(Date date){
+        mSelectedDate= date;
+        //if(mData!= null) mTodos= mData.get(mSelectedDate);
+    }
 
     /**
      * Item's layout
@@ -47,7 +52,7 @@ public class TodoListAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
-        ViewHolder viewHolder;
+        ViewHolder viewHolder= null;
         String TIMEFORMAT= "%5s시:%5s분";
         String TODOFORMST= "[%s]";
 
@@ -60,6 +65,8 @@ public class TodoListAdapter extends BaseAdapter {
             TextView time= (TextView)convertView.findViewById(R.id.time_text_view);
             TextView todo= (TextView)convertView.findViewById(R.id.todo_text_view);
 
+            List<Todo> dateTodo= mData.get(mSelectedDate);
+
             Todo todothings= (Todo)getItem(position);
             viewHolder= new ViewHolder();
             viewHolder.time= time;
@@ -68,11 +75,12 @@ public class TodoListAdapter extends BaseAdapter {
             convertView.setTag(viewHolder);
 
         } else {// reuse convertView
-            viewHolder= (ViewHolder)convertView.getTag();
+            if(convertView.getTag()!= null)
+                viewHolder= (ViewHolder)convertView.getTag();
         }
 
         // Bind data to Layout
-        Todo todothings= (Todo)getItem(position);
+        Todo todothings= (Todo) getItem(position);
         if(mSelectedDate.equals(todothings.getDate())) {
             viewHolder.time.setText(
                     String.format(TIMEFORMAT, todothings.getHour(), todothings.getMin()));

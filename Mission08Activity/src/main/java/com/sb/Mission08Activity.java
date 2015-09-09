@@ -19,7 +19,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @SuppressLint("SimpleDateFormat")
@@ -28,7 +30,9 @@ public class Mission08Activity extends AppCompatActivity
 
     private CaldroidFragment caldroidFragment;
 
-    private List<Todo> mData;
+    private Map<Date, List<Todo>> mData;
+    private List<Todo> mTodos;
+
     private ListView mTodoListView;
     private TodoListAdapter mTodoAdapter;
 
@@ -123,7 +127,8 @@ public class Mission08Activity extends AppCompatActivity
         caldroidFragment.setCaldroidListener(listener);
 
         // Set listview and adapter as linked
-        mData= new ArrayList<>();
+        mData= new HashMap<>();
+        mTodos= new ArrayList<>();
 
         mTodoListView= (ListView)findViewById(R.id.todo_list_view);
         mTodoAdapter= new TodoListAdapter(getApplicationContext(), mData);
@@ -215,7 +220,9 @@ public class Mission08Activity extends AppCompatActivity
         String[] str= result.split(",");
         // Todo hour, min, todo content
         Todo todo= new Todo(mDate, str[0], str[1], str[2]);
-        mData.add(todo);
+
+        mTodos.add(todo);
+        mData.put(mDate, mTodos);
 
         // Refresh listview data
         mTodoAdapter.notifyDataSetChanged();
