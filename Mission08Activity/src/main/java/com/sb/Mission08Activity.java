@@ -34,44 +34,6 @@ public class Mission08Activity extends AppCompatActivity
 
     private Date mDate;
 
-    private void setCustomResourceForDates() {
-        Calendar cal = Calendar.getInstance();
-
-//        int startDay= cal.get(cal.DAY_OF_WEEK);
-//        int lastDay= cal.getActualMaximum(cal.DATE);
-//        for(int i= startDay; i< lastDay; i+= 7){
-//            cal.add(cal.DATE, (7- i% 7));
-//            Date blueDate = cal.getTime();
-//            caldroidFragment.setTextColorForDate(R.color.blue, blueDate);
-//        }
-//        // Min date is last 7 days
-//        cal.add(Calendar.DATE, -7);cal.get
-//        Date blueDate = cal.getTime();
-//
-//        // Max date is next 7 days
-//        cal = Calendar.getInstance();
-//        cal.add(Calendar.DATE, 7);
-//        Date greenDate = cal.getTime();
-
-        if (caldroidFragment != null) {
-//            caldroidFragment.setBackgroundResourceForDate(R.color.blue,
-//                    blueDate);
-//            caldroidFragment.setBackgroundResourceForDate(R.color.green,
-//                    greenDate);
-//            caldroidFragment.setTextColorForDate(R.color.white, blueDate);
-//            caldroidFragment.setTextColorForDate(R.color.white, greenDate);
-
-            // Initialize calendar
-            caldroidFragment.clearDisableDates();
-            caldroidFragment.clearSelectedDates();
-            caldroidFragment.setMinDate(null);
-            caldroidFragment.setMaxDate(null);
-            caldroidFragment.refreshView();
-        }
-
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,9 +91,6 @@ public class Mission08Activity extends AppCompatActivity
 
             @Override
             public void onSelectDate(Date date, View view) {
-//                Toast.makeText(getApplicationContext(), formatter.format(date),
-//                        Toast.LENGTH_SHORT).show();
-
                 // Set member fileds as selected date
                 mDate= date;
 
@@ -142,16 +101,11 @@ public class Mission08Activity extends AppCompatActivity
 
             @Override
             public void onChangeMonth(int month, int year) {
-//                String text = "month: " + month + " year: " + year;
-//                Toast.makeText(getApplicationContext(), text,
-//                        Toast.LENGTH_SHORT).show();
+                setWeekEndColor(month, year);
             }
 
             @Override
             public void onLongClickDate(Date date, View view) {
-//                Toast.makeText(getApplicationContext(),
-//                        "Long click " + formatter.format(date),
-//                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -175,6 +129,39 @@ public class Mission08Activity extends AppCompatActivity
         mTodoAdapter= new TodoListAdapter(getApplicationContext(), mData);
 
         mTodoListView.setAdapter((TodoListAdapter)mTodoAdapter);
+    }
+
+    private void setWeekEndColor(int month, int year) {
+        // Set color as blue and red for saturday, sunday respectively
+        Calendar cal= Calendar.getInstance();
+        cal.set(year, month, 1);
+        while (cal.get(Calendar.MONTH)== month) {
+            if( cal.get(Calendar.DAY_OF_WEEK)% 7== 1 ) {// Sunday
+                Date redDate= cal.getTime();
+                caldroidFragment.setTextColorForDate(R.color.caldroid_light_red, redDate);
+            } else if ( cal.get(Calendar.DAY_OF_WEEK)% 7== 0 ) {// Saturday
+                Date blueDate= cal.getTime();
+                caldroidFragment.setTextColorForDate(R.color.caldroid_sky_blue, blueDate);
+            }
+            cal.add(Calendar.DATE, 1);
+        }
+    }
+
+    private void setCustomResourceForDates() {
+        Calendar cal = Calendar.getInstance();
+
+        if (caldroidFragment != null) {
+            // Initialize calendar
+            caldroidFragment.clearDisableDates();
+            caldroidFragment.clearSelectedDates();
+            caldroidFragment.setMinDate(null);
+            caldroidFragment.setMaxDate(null);
+            caldroidFragment.refreshView();
+        }
+
+        // Default calender color for saturday and sunday
+        //setWeekEndColor(cal.YEAR, cal.MONTH- 1);
+
     }
 
     private void showDialog() {
