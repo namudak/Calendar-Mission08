@@ -9,9 +9,7 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2015-09-06.
@@ -19,18 +17,17 @@ import java.util.Map;
 public class TodoListAdapter extends BaseAdapter {
     final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
     private final Context mContext;
-    private Map<String, List<Todo>> mData= new HashMap<>();
+    private List<Todo> mTodos;
     private Date mDate;
 
-    public TodoListAdapter(Context context, HashMap<String, List<Todo>> data) {
+    public TodoListAdapter(Context context, List<Todo>data) {
         this.mContext= context;
-        this.mData= data;
+        this.mTodos= data;
     }
     @Override
-    public int getCount() {
-        return mData.size(); }
+    public int getCount() { return mTodos.size(); }
     @Override
-    public Object getItem(int position) { return position; }
+    public Object getItem (int position) { return (Todo)mTodos.get(position); }
     @Override
     public long getItemId(int position) { return position; }
 
@@ -49,8 +46,6 @@ public class TodoListAdapter extends BaseAdapter {
         String TODOFORMST= "[%s]";
 
         ViewHolder viewHolder= null;
-
-
 
         // Layout compose
         // convertView first loaded
@@ -73,20 +68,12 @@ public class TodoListAdapter extends BaseAdapter {
         }
 
         // Bind data to Layout
-        List<Todo> todothings= mData.get(formatter.format(mDate));
-        if(todothings!= null) {
-            for (int i = 0; i < todothings.size(); i++) {
-                viewHolder.time.setText(
-                        String.format(TIMEFORMAT,
-                                todothings.get(i).getHour(), todothings.get(i).getMin()));
-                viewHolder.todo.setText(
-                        String.format(TODOFORMST, todothings.get(i).getTodo()));
-            }
-        } else {
-            viewHolder.time.setText("");
-            viewHolder.todo.setText("");
-        }
-
+        Todo todothings= (Todo) getItem(position);
+        viewHolder.time.setText(
+                String.format(TIMEFORMAT,
+                        todothings.getHour(), todothings.getMin()));
+        viewHolder.todo.setText(
+                String.format(TODOFORMST, todothings.getTodo()));
 
         // Return view
         return convertView;

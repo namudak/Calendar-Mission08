@@ -87,8 +87,15 @@ public class Mission08Activity extends AppCompatActivity
                 mDate= date;
 
                 // Refresh listview data
-                mTodoAdapter.setDate(mDate);
-                mTodoAdapter.notifyDataSetChanged();
+                if(mData.size()> 0) {
+                    mTodos = mData.get(formatter.format(mDate));
+                    if(mTodos!= null) {
+                        mTodoAdapter = new TodoListAdapter(getApplicationContext(), mTodos);
+                        mTodoListView.setAdapter(mTodoAdapter);
+
+                        mTodoAdapter.notifyDataSetChanged();
+                    }
+                }
             }
 
             @Override
@@ -118,12 +125,17 @@ public class Mission08Activity extends AppCompatActivity
         mTodos= new ArrayList<>();
 
         mTodoListView= (ListView)findViewById(R.id.todo_list_view);
-        mTodoAdapter= new TodoListAdapter(getApplicationContext(), (HashMap<String, List<Todo>>)mData);
+        mTodoAdapter= new TodoListAdapter(getApplicationContext(), mTodos);
 
         mTodoListView.setAdapter(mTodoAdapter);
 
     }
 
+    /**
+     * Set color for weekend
+     * @param month
+     * @param year
+     */
     private void setWeekEndColor(int month, int year) {
         // Set color as blue and red for saturday, sunday respectively
         Calendar cal= Calendar.getInstance();
@@ -141,7 +153,6 @@ public class Mission08Activity extends AppCompatActivity
     }
 
     private void setCustomResourceForDates() {
-        Calendar cal = Calendar.getInstance();
 
         if (caldroidFragment != null) {
             // Initialize calendar
@@ -151,11 +162,13 @@ public class Mission08Activity extends AppCompatActivity
             caldroidFragment.setMaxDate(null);
             caldroidFragment.refreshView();
         }
+
+        Calendar cal = Calendar.getInstance();
         // Default as today
         mDate= cal.getTime();
 
         // Display current month
-        setWeekEndColor(Calendar.MONTH- 1, Calendar.YEAR);
+        setWeekEndColor(Calendar.MONTH, Calendar.YEAR);
 
     }
 
@@ -207,18 +220,21 @@ public class Mission08Activity extends AppCompatActivity
 
     @Override
     public void onTodoDialogClick(DialogFragment dialog, String result) {
+        String keyDate= formatter.format(mDate);
         String[] str= result.split(",");
+
         // Todo hour, min, todo content
         Todo todo= new Todo(mDate, str[0], str[1], str[2]);
         // No todo at this date
-        if(mData.get(formatter.format(mDate))== null){
-            mTodos.clear();
-            mTodos.add(todo);
-        } else {
-            mTodos= mData.get(formatter.format(mDate));
-            mTodos.add(todo);
+        mTodos= new ArrayList<Todo>();
+        if(mData.get(keyDate)!= null){
+            mTodos= mData.get(keyDate);
         }
-        mData.put(formatter.format(mDate), mTodos);
+        mTodos.add(todo);
+        mData.put(keyDate, mTodos);
+
+        mTodoAdapter= new TodoListAdapter(getApplicationContext(), mTodos);
+        mTodoListView.setAdapter(mTodoAdapter);
 
         // Refresh listview data
         mTodoAdapter.notifyDataSetChanged();
