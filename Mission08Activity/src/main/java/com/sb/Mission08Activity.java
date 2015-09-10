@@ -26,7 +26,7 @@ import java.util.Map;
 
 @SuppressLint("SimpleDateFormat")
 public class Mission08Activity extends AppCompatActivity
-        implements TodoDialogFragment.TodoDialogFragmentListener {
+                                implements TodoDialogFragment.TodoDialogFragmentListener {
 
     private CaldroidFragment caldroidFragment;
 
@@ -55,7 +55,6 @@ public class Mission08Activity extends AppCompatActivity
             caldroidFragment.restoreStatesFromKey(savedInstanceState,
                     "CALDROID_SAVED_STATE");
         }
-
         // If activity is created from fresh
         else {
             Bundle args = new Bundle();
@@ -79,7 +78,7 @@ public class Mission08Activity extends AppCompatActivity
         t.commit();
 
         // Setup listener
-        final CaldroidListener listener = new CaldroidListener() {
+        final CaldroidListener listener= new CaldroidListener() {
 
             @Override
             public void onSelectDate(Date date, View view) {
@@ -89,13 +88,18 @@ public class Mission08Activity extends AppCompatActivity
                 // Refresh listview data
                 if(mData.size()> 0) {
                     mTodos = mData.get(formatter.format(mDate));
-                    if(mTodos!= null) {
+                    if (mTodos != null) {
                         mTodoAdapter = new TodoListAdapter(getApplicationContext(), mTodos);
                         mTodoListView.setAdapter(mTodoAdapter);
-
-                        mTodoAdapter.notifyDataSetChanged();
+                        //mTodoAdapter.notifyDataSetChanged();
+                    } else {
+                        mTodos = new ArrayList<>();
+                        mTodoAdapter = new TodoListAdapter(getApplicationContext(), mTodos);
+                        mTodoListView.setAdapter(mTodoAdapter);
+                        //mTodoAdapter.notifyDataSetChanged();
                     }
                 }
+
             }
 
             @Override
@@ -113,6 +117,7 @@ public class Mission08Activity extends AppCompatActivity
                             "Caldroid view is created", Toast.LENGTH_SHORT)
                             .show();
                 }
+                setWeekEndColor(0, 0);
             }
 
         };
@@ -126,7 +131,6 @@ public class Mission08Activity extends AppCompatActivity
 
         mTodoListView= (ListView)findViewById(R.id.todo_list_view);
         mTodoAdapter= new TodoListAdapter(getApplicationContext(), mTodos);
-
         mTodoListView.setAdapter(mTodoAdapter);
 
     }
@@ -139,7 +143,14 @@ public class Mission08Activity extends AppCompatActivity
     private void setWeekEndColor(int month, int year) {
         // Set color as blue and red for saturday, sunday respectively
         Calendar cal= Calendar.getInstance();
+
+        if((month+ year)== 0) {
+            month = cal.get(Calendar.MONTH);
+            year = cal.get(Calendar.YEAR);
+        }
         cal.set(year, month, 1);
+
+
         while (cal.get(Calendar.MONTH)== month) {
             if( cal.get(Calendar.DAY_OF_WEEK)% 7== 1 ) {// Sunday
                 Date redDate= cal.getTime();
@@ -152,6 +163,9 @@ public class Mission08Activity extends AppCompatActivity
         }
     }
 
+    /**
+     *  Initialize operation
+     */
     private void setCustomResourceForDates() {
 
         if (caldroidFragment != null) {
@@ -172,6 +186,9 @@ public class Mission08Activity extends AppCompatActivity
 
     }
 
+    /**
+     * Show dialog for data input
+     */
     private void showDialog() {
         // Show dialog for todo data input
         FragmentManager fm= getSupportFragmentManager();
@@ -226,13 +243,14 @@ public class Mission08Activity extends AppCompatActivity
         // Todo hour, min, todo content
         Todo todo= new Todo(mDate, str[0], str[1], str[2]);
         // No todo at this date
-        mTodos= new ArrayList<Todo>();
+        mTodos= new ArrayList<>();
         if(mData.get(keyDate)!= null){
             mTodos= mData.get(keyDate);
         }
         mTodos.add(todo);
         mData.put(keyDate, mTodos);
 
+        // List view operation
         mTodoAdapter= new TodoListAdapter(getApplicationContext(), mTodos);
         mTodoListView.setAdapter(mTodoAdapter);
 

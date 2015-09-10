@@ -36,7 +36,6 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
         mHour = (EditText)view.findViewById(R.id.hour_edit_text);
         mMin = (EditText)view.findViewById(R.id.min_edit_text);
 
-
         mSaveButton = (Button)view.findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(this);
         mCloseButton = (Button)view.findViewById(R.id.close_button);
@@ -45,6 +44,9 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
         // Remove dialog title and background
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         //getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        // Set Title as selected date
+        //getDialog().getWindow().setTitle("");
 
         // ready for input
         mTodo.requestFocus();

@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,7 +17,6 @@ public class TodoListAdapter extends BaseAdapter {
     final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
     private final Context mContext;
     private List<Todo> mTodos;
-    private Date mDate;
 
     public TodoListAdapter(Context context, List<Todo>data) {
         this.mContext= context;
@@ -27,13 +25,9 @@ public class TodoListAdapter extends BaseAdapter {
     @Override
     public int getCount() { return mTodos.size(); }
     @Override
-    public Object getItem (int position) { return (Todo)mTodos.get(position); }
+    public Object getItem (int position) { return mTodos.get(position); }
     @Override
     public long getItemId(int position) { return position; }
-
-    public void setDate(Date date) {
-        mDate= date;
-    }
     /**
      * Item's layout
      * @param position
@@ -69,11 +63,16 @@ public class TodoListAdapter extends BaseAdapter {
 
         // Bind data to Layout
         Todo todothings= (Todo) getItem(position);
-        viewHolder.time.setText(
-                String.format(TIMEFORMAT,
-                        todothings.getHour(), todothings.getMin()));
-        viewHolder.todo.setText(
-                String.format(TODOFORMST, todothings.getTodo()));
+        if(todothings!= null) {
+            viewHolder.time.setText(
+                    String.format(TIMEFORMAT,
+                            todothings.getHour(), todothings.getMin()));
+            viewHolder.todo.setText(
+                    String.format(TODOFORMST, todothings.getTodo()));
+        } else {
+            viewHolder.time.setText("");
+            viewHolder.todo.setText("");
+        }
 
         // Return view
         return convertView;
