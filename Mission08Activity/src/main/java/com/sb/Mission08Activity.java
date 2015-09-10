@@ -118,10 +118,9 @@ public class Mission08Activity extends AppCompatActivity
         mTodos= new ArrayList<>();
 
         mTodoListView= (ListView)findViewById(R.id.todo_list_view);
-        mTodoAdapter= new TodoListAdapter(getApplicationContext(),
-                (List<Todo>)mData.get(formatter.format(mDate)));
+        mTodoAdapter= new TodoListAdapter(getApplicationContext(), (HashMap<String, List<Todo>>)mData);
 
-        mTodoListView.setAdapter((TodoListAdapter) mTodoAdapter);
+        mTodoListView.setAdapter(mTodoAdapter);
 
     }
 
@@ -154,6 +153,9 @@ public class Mission08Activity extends AppCompatActivity
         }
         // Default as today
         mDate= cal.getTime();
+
+        // Display current month
+        setWeekEndColor(Calendar.MONTH- 1, Calendar.YEAR);
 
     }
 
@@ -210,7 +212,7 @@ public class Mission08Activity extends AppCompatActivity
         Todo todo= new Todo(mDate, str[0], str[1], str[2]);
         // No todo at this date
         if(mData.get(formatter.format(mDate))== null){
-            mTodos= new ArrayList<>();
+            mTodos.clear();
             mTodos.add(todo);
         } else {
             mTodos= mData.get(formatter.format(mDate));
