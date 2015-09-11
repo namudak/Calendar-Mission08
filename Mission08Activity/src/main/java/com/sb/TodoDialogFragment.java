@@ -30,7 +30,7 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view= inflater.inflate(R.layout.todo_dialog, container);
+        View view= inflater.inflate(R.layout.todoinput_dialog, container);
 
         mTodo = (EditText)view.findViewById(R.id.todo_edit_text);
         mHour = (EditText)view.findViewById(R.id.hour_edit_text);

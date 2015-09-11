@@ -3,22 +3,25 @@ package com.sb;
 import java.util.Date;
 
 /**
- * Created by Administrator on 2015-09-06.
+ * Created by student on 2015-09-11.
  */
-public class Todo {
-    Date date;
-    String hour;
-    String min;
-    String todo;
+public class TodoItem {
 
-    public Todo() {}
-    public Todo(Date date, String hour, String min, String todo){
+    private Date date;
+    private String hour;
+    private String min;
+    private String todo;
+
+    // Constructors
+    public TodoItem() {}
+    public TodoItem(Date date, String hour, String min, String todo){
         this.date= date;
         this.hour= hour;
         this.min= min;
         this.todo= todo;
     }
 
+    // Getters and Setters
     public Date getDate() {return date;}
     public String getHour() {return hour;}
     public String getMin() {return min;}
@@ -28,4 +31,5 @@ public class Todo {
     public void setHour(String hour) {this.hour= hour;}
     public void setMin(String min) {this.min= min;}
     public void setTodo(String todo) {this.todo= todo;}
+
 }

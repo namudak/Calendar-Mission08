@@ -30,15 +30,15 @@ public class Mission08Activity extends AppCompatActivity
 
     private CaldroidFragment caldroidFragment;
 
-    private Map<String, List<Todo>> mData;
-    private List<Todo> mTodos;
+    private Map<String, List<TodoItem>> mData;
+    private List<TodoItem> mTodos;
 
     private ListView mTodoListView;
-    private TodoListAdapter mTodoAdapter;
+    private TodoItemAdapter mTodoAdapter;
 
     private Date mDate;
 
-    final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class Mission08Activity extends AppCompatActivity
             args.putBoolean(CaldroidFragment.SIX_WEEKS_IN_CALENDAR, true);
 
             // Uncomment this line to use dark theme
-            args.putInt(CaldroidFragment.THEME_RESOURCE, com.caldroid.R.style.CaldroidDefaultDark);//
+            //args.putInt(CaldroidFragment.THEME_RESOURCE, com.caldroid.R.style.CaldroidDefaultDark);//
 
             caldroidFragment.setArguments(args);
         }
@@ -89,12 +89,12 @@ public class Mission08Activity extends AppCompatActivity
                 if(mData.size()> 0) {
                     mTodos = mData.get(formatter.format(mDate));
                     if (mTodos != null) {
-                        mTodoAdapter = new TodoListAdapter(getApplicationContext(), mTodos);
+                        mTodoAdapter = new TodoItemAdapter(getApplicationContext(), mTodos);
                         mTodoListView.setAdapter(mTodoAdapter);
                         //mTodoAdapter.notifyDataSetChanged();
                     } else {
                         mTodos = new ArrayList<>();
-                        mTodoAdapter = new TodoListAdapter(getApplicationContext(), mTodos);
+                        mTodoAdapter = new TodoItemAdapter(getApplicationContext(), mTodos);
                         mTodoListView.setAdapter(mTodoAdapter);
                         //mTodoAdapter.notifyDataSetChanged();
                     }
@@ -130,7 +130,7 @@ public class Mission08Activity extends AppCompatActivity
         mTodos= new ArrayList<>();
 
         mTodoListView= (ListView)findViewById(R.id.todo_list_view);
-        mTodoAdapter= new TodoListAdapter(getApplicationContext(), mTodos);
+        mTodoAdapter= new TodoItemAdapter(getApplicationContext(), mTodos);
         mTodoListView.setAdapter(mTodoAdapter);
 
     }
@@ -241,7 +241,7 @@ public class Mission08Activity extends AppCompatActivity
         String[] str= result.split(",");
 
         // Todo hour, min, todo content
-        Todo todo= new Todo(mDate, str[0], str[1], str[2]);
+        TodoItem todo= new TodoItem(mDate, str[0], str[1], str[2]);
         // No todo at this date
         mTodos= new ArrayList<>();
         if(mData.get(keyDate)!= null){
@@ -251,7 +251,7 @@ public class Mission08Activity extends AppCompatActivity
         mData.put(keyDate, mTodos);
 
         // List view operation
-        mTodoAdapter= new TodoListAdapter(getApplicationContext(), mTodos);
+        mTodoAdapter= new TodoItemAdapter(getApplicationContext(), mTodos);
         mTodoListView.setAdapter(mTodoAdapter);
 
         // Refresh listview data
