@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Administrator on 2015-09-06.
  */
 public class TodoItemAdapter extends BaseAdapter {
-    final SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
     private final Context mContext;
     private List<TodoItem> mTodos;
 

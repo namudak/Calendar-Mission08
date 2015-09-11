@@ -88,16 +88,11 @@ public class Mission08Activity extends AppCompatActivity
                 // Refresh listview data
                 if(mData.size()> 0) {
                     mTodos = mData.get(formatter.format(mDate));
-                    if (mTodos != null) {
-                        mTodoAdapter = new TodoItemAdapter(getApplicationContext(), mTodos);
-                        mTodoListView.setAdapter(mTodoAdapter);
-                        //mTodoAdapter.notifyDataSetChanged();
-                    } else {
-                        mTodos = new ArrayList<>();
-                        mTodoAdapter = new TodoItemAdapter(getApplicationContext(), mTodos);
-                        mTodoListView.setAdapter(mTodoAdapter);
-                        //mTodoAdapter.notifyDataSetChanged();
-                    }
+
+                    if(mTodos== null) mTodos= new ArrayList<>();
+
+                    mTodoAdapter = new TodoItemAdapter(getApplicationContext(), mTodos);
+                    mTodoListView.setAdapter(mTodoAdapter);
                 }
 
             }
