@@ -59,8 +59,10 @@ public class Mission08Activity extends AppCompatActivity
         else {
             Bundle args = new Bundle();
             Calendar cal = Calendar.getInstance();
+
             args.putInt(CaldroidFragment.MONTH, cal.get(Calendar.MONTH) + 1);
             args.putInt(CaldroidFragment.YEAR, cal.get(Calendar.YEAR));
+
             args.putBoolean(CaldroidFragment.ENABLE_SWIPE, true);
             args.putBoolean(CaldroidFragment.SIX_WEEKS_IN_CALENDAR, true);
 
@@ -112,7 +114,7 @@ public class Mission08Activity extends AppCompatActivity
                             "Caldroid view is created", Toast.LENGTH_SHORT)
                             .show();
                 }
-                setWeekEndColor(0, 0);
+                //setWeekEndColor(0, 0);
             }
 
         };
@@ -143,10 +145,10 @@ public class Mission08Activity extends AppCompatActivity
             month = cal.get(Calendar.MONTH);
             year = cal.get(Calendar.YEAR);
         }
-        cal.set(year, month, 1);
+        cal.set(year, month- 1, 1);
 
 
-        while (cal.get(Calendar.MONTH)== month) {
+        while (cal.get(Calendar.MONTH)== (month- 1)) {
             if( cal.get(Calendar.DAY_OF_WEEK)% 7== 1 ) {// Sunday
                 Date redDate= cal.getTime();
                 caldroidFragment.setTextColorForDate(R.color.caldroid_light_red, redDate);
@@ -172,12 +174,12 @@ public class Mission08Activity extends AppCompatActivity
             caldroidFragment.refreshView();
         }
 
-        Calendar cal = Calendar.getInstance();
-        // Default as today
-        mDate= cal.getTime();
-
-        // Display current month
-        setWeekEndColor(Calendar.MONTH, Calendar.YEAR);
+//        Calendar cal = Calendar.getInstance();
+//        // Default as today
+//        mDate= cal.getTime();
+//
+//        // Display current month
+//        setWeekEndColor(Calendar.MONTH, Calendar.YEAR);
 
     }
 
