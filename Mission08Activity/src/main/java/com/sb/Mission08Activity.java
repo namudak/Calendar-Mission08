@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
+import com.sb.database.helper.DbHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ public class Mission08Activity extends AppCompatActivity
                                 implements TodoDialogFragment.TodoDialogFragmentListener {
 
     private CaldroidFragment caldroidFragment;
+
+    private DbHelper mDbHelper;
 
     private Map<String, List<TodoItem>> mData;
     private List<TodoItem> mTodos;

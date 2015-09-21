@@ -12,17 +12,23 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 
 /**
  * Created by Administrator on 2015-09-06.
  */
 public class TodoDialogFragment extends DialogFragment implements View.OnClickListener {
 
-    private Button mSaveButton;
-    private Button mCloseButton;
     private EditText mTodo;
     private EditText mHour;
     private EditText mMin;
+    private RadioButton mClear;
+    private RadioButton mCloud;
+    private RadioButton mRain;
+    private RadioButton mSnow;
+    private Button mSaveButton;
+    private Button mCloseButton;
+
 
     public TodoDialogFragment() {}
 
@@ -35,6 +41,11 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
         mTodo = (EditText)view.findViewById(R.id.todo_edit_text);
         mHour = (EditText)view.findViewById(R.id.hour_edit_text);
         mMin = (EditText)view.findViewById(R.id.min_edit_text);
+
+        mClear = (RadioButton)view.findViewById(R.id.clear_RB);
+        mCloud = (RadioButton)view.findViewById(R.id.cloud_RB);
+        mRain = (RadioButton)view.findViewById(R.id.rain_RB);
+        mSnow = (RadioButton)view.findViewById(R.id.snow_RB);
 
         mSaveButton = (Button)view.findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(this);

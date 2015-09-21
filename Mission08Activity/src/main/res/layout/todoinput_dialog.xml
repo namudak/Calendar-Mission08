@@ -2,78 +2,124 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:layout_marginLeft="10dp"
-    android:layout_marginTop="10dp">
+    android:layout_marginTop="10dp"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="일정"/>
+            android:text="일정" />
+
         <EditText
             android:id="@+id/todo_edit_text"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:singleLine="true"/>
+            android:singleLine="true" />
     </LinearLayout>
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:layout_marginTop="10dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="시간"/>
+            android:text="시간" />
+
         <EditText
             android:id="@+id/hour_edit_text"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:gravity="end"
             android:inputType="numberSigned"
-            android:maxLength="2"
-            android:gravity="end"/>
+            android:maxLength="2" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="시"/>
+            android:text="시" />
+
         <EditText
             android:id="@+id/min_edit_text"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:gravity="end"
             android:inputType="numberSigned"
-            android:maxLength="2"
-            android:gravity="end"/>
+            android:maxLength="2" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="분"/>
+            android:text="분" />
     </LinearLayout>
 
     <LinearLayout
-            android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:layout_marginTop="20dp">
+            android:text="날씨"/>
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/clear_RB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="맑음"/>
+            <RadioButton
+                android:id="@+id/cloud_RB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="흐림"/>
+            <RadioButton
+                android:id="@+id/rain_RB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="비"/>
+            <RadioButton
+                android:id="@+id/snow_RB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="눈"/>
+        </RadioGroup>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="20dp">
+
         <Button
             android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="저장"/>
+            android:text="저장" />
 
         <Button
             android:id="@+id/close_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:text="닫기"/>
+            android:text="닫기" />
     </LinearLayout>
 
 
