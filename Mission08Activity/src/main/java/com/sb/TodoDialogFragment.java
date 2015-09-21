@@ -13,35 +13,43 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2015-09-06.
  */
 public class TodoDialogFragment extends DialogFragment implements View.OnClickListener {
 
+    private String mMode;
     private EditText mTodo;
     private EditText mHour;
     private EditText mMin;
+    private RadioGroup mWeather;
     private RadioButton mClear;
     private RadioButton mCloud;
     private RadioButton mRain;
     private RadioButton mSnow;
     private Button mSaveButton;
-    private Button mCloseButton;
-
+    private Button mUpdateButton;
 
     public TodoDialogFragment() {}
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view= inflater.inflate(R.layout.todoinput_dialog, container);
 
+        Bundle bundle= getArguments();
+        List<String> strArray= bundle.getStringArrayList("parm");
+        mMode= strArray.get(0);
+
         mTodo = (EditText)view.findViewById(R.id.todo_edit_text);
         mHour = (EditText)view.findViewById(R.id.hour_edit_text);
         mMin = (EditText)view.findViewById(R.id.min_edit_text);
 
+        mWeather= (RadioGroup)view.findViewById(R.id.weather_RG);
         mClear = (RadioButton)view.findViewById(R.id.clear_RB);
         mCloud = (RadioButton)view.findViewById(R.id.cloud_RB);
         mRain = (RadioButton)view.findViewById(R.id.rain_RB);
@@ -49,8 +57,18 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
 
         mSaveButton = (Button)view.findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(this);
-        mCloseButton = (Button)view.findViewById(R.id.close_button);
-        mCloseButton.setOnClickListener(this);
+        mUpdateButton = (Button)view.findViewById(R.id.update_button);
+        mUpdateButton.setOnClickListener(this);
+
+        if(mMode.equals("update")) {
+            mTodo.setText(strArray.get(1));
+            mHour.setText(strArray.get(2));
+            mMin.setText(strArray.get(3));
+            mWeather.check(Integer.parseInt(strArray.get(4)));
+            mSaveButton.setEnabled(false);
+        } else if(mMode.equals("add")){
+            mUpdateButton.setEnabled(false);
+        }
 
         // Remove dialog title and background
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -58,6 +76,15 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
 
         // Set Title as selected date
         //getDialog().getWindow().setTitle("");
+
+        // Set listener for Radiogroup
+        mWeather.check(R.id.clear_RB);
+        mWeather.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                group.check(checkedId);
+            }
+        });
 
         // ready for input
         mTodo.requestFocus();
@@ -71,11 +98,15 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.save_button:
-                doAction();
+                doAction(R.id.save_button);
                 break;
-            case R.id.close_button:
+            case R.id.update_button:
+                doAction(R.id.update_button);
+                break;
+            default:
                 dismiss();
                 break;
+
         }
     }
 
@@ -98,12 +129,16 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
 
     }
 
-    public void doAction() {
+    public void doAction(int mode) {
         todoDialogFragmentListener.onTodoDialogClick(
                 TodoDialogFragment.this,
+                String.valueOf(mode)+ ","+
+                String.valueOf(mWeather.getCheckedRadioButtonId()+ ","+
                 mHour.getText().toString()+ ","+
-                        mMin.getText().toString()+ ","+
-                        mTodo.getText().toString()
+                mMin.getText().toString()+ ","+
+                mTodo.getText().toString()
+                )
+
         );
     }
 }

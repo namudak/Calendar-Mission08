@@ -29,7 +29,6 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRIES);
-
     }
 
     @Override
@@ -43,23 +42,22 @@ public class DbHelper extends SQLiteOpenHelper {
         String selection= null;
         String[] selectionArgs= null;
         String[] projection= null;
-        if(values.getAsString("Mode").equals("TodoCheck")) {
+        if(values.getAsString("Mode").equals("Todo")) {
             selection = DbContract.UserEntry.COLUMN_NAME_TIME + "= ? ;";
             values.remove("Mode");
             selectionArgs = new String[]{
                     values.getAsString(DbContract.UserEntry.COLUMN_NAME_TIME)
             };
 
-            // Define a projection that specifies which columns from the database
-            // you will actually use after this query.
-            projection = new String[]{
-                    DbContract.UserEntry.COLUMN_NAME_TIME
-            };
-        } else {
-            projection= new String[] {
-                            DbContract.UserEntry.COLUMN_NAME_TIME
-            };
         }
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        projection = new String[]{
+                DbContract.UserEntry.COLUMN_NAME_TODO,
+                DbContract.UserEntry.COLUMN_NAME_HOUR,
+                DbContract.UserEntry.COLUMN_NAME_MIN,
+                DbContract.UserEntry.COLUMN_NAME_WEATHER
+        };
         // How you want the results sorted in the resulting Cursor
         //String sortOrder =
         //        DbContract.UserEntry.COLUMN_NAME_UPDATED + " DESC";
@@ -82,8 +80,7 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         // Insert the new row, returning the primary key value of the new row
-        long newRowId;
-        newRowId = db.insert(
+        long newRowId = db.insert(
                 DbContract.UserEntry.TABLE_NAME,
                 null,
                 values);

@@ -73,8 +73,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="날씨"/>
+            android:text="날씨"
+            android:layout_gravity="center_vertical" />
         <RadioGroup
+            android:id="@+id/weather_RG"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -115,11 +117,11 @@
             android:text="저장" />
 
         <Button
-            android:id="@+id/close_button"
+            android:id="@+id/update_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:text="닫기" />
+            android:text="수정" />
     </LinearLayout>
 
 
