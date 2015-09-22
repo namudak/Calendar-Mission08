@@ -12,18 +12,20 @@ import com.sb.database.contract.DbContract;
  * Created by student on 2015-09-18.
  */
 public class DbHelper extends SQLiteOpenHelper {
+    private static DbHelper sInstance;
+
     public static final String DB_NAME = "Todo.db";
     public static final int DB_VER = 1;
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE "+ DbContract.UserEntry.TABLE_NAME+ "("+
-                    DbContract.UserEntry._ID+ " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    DbContract.UserEntry.COLUMN_NAME_TIME+ " TEXT NOT NULL," +
-                    DbContract.UserEntry.COLUMN_NAME_WEATHER+ "," +
-                    DbContract.UserEntry.COLUMN_NAME_HOUR+ "," +
-                    DbContract.UserEntry.COLUMN_NAME_MIN+ " ," +
-                    DbContract.UserEntry.COLUMN_NAME_TODO+ ");";
+            "CREATE TABLE "+ DbContract.DbEntry.TABLE_NAME+ "("+
+                    DbContract.DbEntry._ID+ " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    DbContract.DbEntry.COLUMN_NAME_TIME+ " TEXT NOT NULL," +
+                    DbContract.DbEntry.COLUMN_NAME_WEATHER+ "," +
+                    DbContract.DbEntry.COLUMN_NAME_HOUR+ "," +
+                    DbContract.DbEntry.COLUMN_NAME_MIN+ " ," +
+                    DbContract.DbEntry.COLUMN_NAME_TODO+ ");";
 
-    public DbHelper(Context context) {
+    private DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VER);
     }
     @Override
@@ -36,35 +38,27 @@ public class DbHelper extends SQLiteOpenHelper {
 
     }
 
-    public Cursor query(ContentValues values) {
+    public static synchronized DbHelper getInstance(Context context) {
+
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null) {
+            sInstance = new DbHelper(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    public Cursor query(ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase db = getReadableDatabase();
 
-        String selection= null;
-        String[] selectionArgs= null;
-        String[] projection= null;
-        if(values.getAsString("Mode").equals("Todo")) {
-            selection = DbContract.UserEntry.COLUMN_NAME_TIME + "= ? ;";
-            values.remove("Mode");
-            selectionArgs = new String[]{
-                    values.getAsString(DbContract.UserEntry.COLUMN_NAME_TIME)
-            };
-
-        }
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-        projection = new String[]{
-                DbContract.UserEntry.COLUMN_NAME_TODO,
-                DbContract.UserEntry.COLUMN_NAME_HOUR,
-                DbContract.UserEntry.COLUMN_NAME_MIN,
-                DbContract.UserEntry.COLUMN_NAME_WEATHER
-        };
         // How you want the results sorted in the resulting Cursor
         //String sortOrder =
-        //        DbContract.UserEntry.COLUMN_NAME_UPDATED + " DESC";
+        //        DbContract.DbEntry.COLUMN_NAME_UPDATED + " DESC";
 
         Cursor cursor = db.query(
-                DbContract.UserEntry.TABLE_NAME,   // The table to query
-                projection,                        // The columns to return
+                DbContract.DbEntry.TABLE_NAME,     // The table to query
+                DbContract.PROJECTION_ALL,         // The columns to return
                 selection,//selection,             // The columns for the WHERE clause
                 selectionArgs,//selectionArgs,     // The values for the WHERE clause
                 null,                              // group by- don't group the rows
@@ -81,24 +75,18 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(
-                DbContract.UserEntry.TABLE_NAME,
+                DbContract.DbEntry.TABLE_NAME,
                 null,
                 values);
 
         return newRowId;
     }
 
-    public int update(ContentValues values) {
-        SQLiteDatabase db = getReadableDatabase();
-
-
-        String selection = DbContract.UserEntry.COLUMN_NAME_TIME + "= ?";
-        String[] selectionArgs = {values.getAsString(DbContract.UserEntry.COLUMN_NAME_TIME)};
-
-        values.remove(DbContract.UserEntry.COLUMN_NAME_TIME);
+    public int update(ContentValues values, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = getWritableDatabase();
 
         int count = db.update(
-                DbContract.UserEntry.TABLE_NAME,
+                DbContract.DbEntry.TABLE_NAME,
                 values,
                 selection,
                 selectionArgs);
@@ -106,15 +94,11 @@ public class DbHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public int delete(ContentValues values) {
+    public int delete(ContentValues values, String selection) {
         SQLiteDatabase db= getWritableDatabase();
 
-        // Define 'where' part of query.
-        String time= values.getAsString(DbContract.UserEntry.COLUMN_NAME_TIME);
-        String selection =  DbContract.UserEntry.COLUMN_NAME_TIME + " = '"+ time+ "'";
-
         // Issue SQL statement.
-        int deleted= db.delete(DbContract.UserEntry.TABLE_NAME, selection, null);
+        int deleted= db.delete(DbContract.DbEntry.TABLE_NAME, selection, null);
 
         return deleted;
     }

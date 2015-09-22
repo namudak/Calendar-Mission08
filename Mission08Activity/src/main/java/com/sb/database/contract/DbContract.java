@@ -7,9 +7,17 @@ import android.provider.BaseColumns;
  */
 
 public final class DbContract {
+
+    public static final String[] PROJECTION_ALL = new String[]{
+            DbEntry.COLUMN_NAME_TODO,
+            DbEntry.COLUMN_NAME_HOUR,
+            DbEntry.COLUMN_NAME_MIN,
+            DbEntry.COLUMN_NAME_WEATHER
+    };
+
     public DbContract() {}
 
-    public static abstract class UserEntry implements BaseColumns {
+    public static abstract class DbEntry implements BaseColumns {
 
         public static final String TABLE_NAME= "Todo";
         public static final String COLUMN_NAME_TIME= "time";

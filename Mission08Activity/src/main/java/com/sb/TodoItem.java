@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class TodoItem {
 
-    private Date date;
+    private String time;
     private String weather;
     private String hour;
     private String min;
@@ -15,22 +15,24 @@ public class TodoItem {
 
     // Constructors
     public TodoItem() {}
-    public TodoItem(Date date,
+    public TodoItem(String time,
                     String hour, String min, String todo, String weather){
-        this.date= date;
+        this.time= time;
         this.hour= hour;
         this.min= min;
         this.todo= todo;
+        this.weather= weather;
+
     }
 
     // Getters and Setters
-    public Date getDate() {return date;}
+    public String getTime() {return time;}
     public String getWeather() {return weather;}
     public String getHour() {return hour;}
     public String getMin() {return min;}
     public String getTodo() {return todo;}
 
-    public void setDate(Date date){this.date= date;}
+    public void setTime(Date date){this.time= time;}
     public void setWeather(String weather) {this.weather= weather;}
     public void setHour(String hour) {this.hour= hour;}
     public void setMin(String min) {this.min= min;}

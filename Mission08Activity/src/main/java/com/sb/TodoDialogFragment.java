@@ -133,10 +133,10 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
         todoDialogFragmentListener.onTodoDialogClick(
                 TodoDialogFragment.this,
                 String.valueOf(mode)+ ","+
-                String.valueOf(mWeather.getCheckedRadioButtonId()+ ","+
                 mHour.getText().toString()+ ","+
                 mMin.getText().toString()+ ","+
-                mTodo.getText().toString()
+                mTodo.getText().toString()+ ","+
+                String.valueOf(mWeather.getCheckedRadioButtonId()
                 )
 
         );

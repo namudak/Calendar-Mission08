@@ -1,23 +1,18 @@
 package com.sb;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
-import com.sb.database.contract.DbContract;
+import com.sb.database.DbFacade;
 import com.sb.database.helper.DbHelper;
 
 import java.text.SimpleDateFormat;
@@ -35,16 +30,17 @@ public class Mission08Activity extends AppCompatActivity
 
     private CaldroidFragment caldroidFragment;
 
+    private DbFacade mFacade;
     private DbHelper mDbHelper;
 
     private Map<String, List<TodoItem>> mData;
-    private List<TodoItem> mTodos;
 
+    private List<TodoItem> mTodos;
     private ListView mTodoListView;
+
     private TodoItemAdapter mTodoAdapter;
 
     private Date mDate;
-
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy MM dd");
 
     @Override
@@ -95,27 +91,10 @@ public class Mission08Activity extends AppCompatActivity
                 mDate= date;
                 String keyDate= formatter.format(mDate);
 
-                // Get a record from database on date
-                ContentValues values= new ContentValues();
-                values.put("Mode", "Todo");
-                values.put(DbContract.UserEntry.COLUMN_NAME_TIME, keyDate);
-
+                // Add todos
                 List parm= new ArrayList();
-                Cursor cursor= mDbHelper.query(values);
-                if(cursor!= null) {
-                    parm.add("update");
-                    cursor.moveToFirst();
-                    parm.add(cursor.getString(cursor.getColumnIndex(DbContract.UserEntry.COLUMN_NAME_TODO)));
-                    parm.add(cursor.getString(cursor.getColumnIndex(DbContract.UserEntry.COLUMN_NAME_HOUR)));
-                    parm.add(cursor.getString(cursor.getColumnIndex(DbContract.UserEntry.COLUMN_NAME_MIN)));
-                    parm.add(cursor.getString(cursor.getColumnIndex(DbContract.UserEntry.COLUMN_NAME_WEATHER)));
-                    showDialog(parm);
-                    Log.d("onSelectDate", "Query Ok.");
-                } else {
-                    parm.add("add");
-                    showDialog(parm);
-                    Log.d("onSelectDate", "Query Not Ok.");
-                }
+                parm.add("addTodo");
+                showDialog(parm);
 
                 // Refresh listview data
                 if(mData.size()> 0) {
@@ -144,7 +123,6 @@ public class Mission08Activity extends AppCompatActivity
                             "Caldroid view is created", Toast.LENGTH_SHORT)
                             .show();
                 }
-                //setWeekEndColor(0, 0);
             }
 
         };
@@ -160,7 +138,8 @@ public class Mission08Activity extends AppCompatActivity
         mTodoAdapter= new TodoItemAdapter(getApplicationContext(), mTodos);
         mTodoListView.setAdapter(mTodoAdapter);
 
-        mDbHelper= new DbHelper(getApplicationContext());
+        mDbHelper= DbHelper.getInstance(getApplicationContext());
+        mFacade = new DbFacade(getApplicationContext());
 
     }
 
@@ -177,7 +156,7 @@ public class Mission08Activity extends AppCompatActivity
             month = cal.get(Calendar.MONTH);
             year = cal.get(Calendar.YEAR);
         }
-        cal.set(year, month- 1, 1);
+        cal.set(year, month - 1, 1);
 
 
         while (cal.get(Calendar.MONTH)== (month- 1)) {
@@ -205,13 +184,6 @@ public class Mission08Activity extends AppCompatActivity
             caldroidFragment.setMaxDate(null);
             caldroidFragment.refreshView();
         }
-
-//        Calendar cal = Calendar.getInstance();
-//        // Default as today
-//        mDate= cal.getTime();
-//
-//        // Display current month
-//        setWeekEndColor(Calendar.MONTH, Calendar.YEAR);
 
     }
 
@@ -243,61 +215,12 @@ public class Mission08Activity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if(id== R.id.action_add_todo){
-            // Show input dialog
-            List parm= new ArrayList();
-            parm.add("add");
-            showDialog(parm);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
     public void onTodoDialogClick(DialogFragment dialog, String result) {
         String keyDate= formatter.format(mDate);
         String[] str= result.split(",");
 
-        ContentValues values = new ContentValues();
-        values.put(DbContract.UserEntry.COLUMN_NAME_TIME, keyDate);
-        values.put(DbContract.UserEntry.COLUMN_NAME_WEATHER, str[1]);
-        values.put(DbContract.UserEntry.COLUMN_NAME_HOUR, str[2]);
-        values.put(DbContract.UserEntry.COLUMN_NAME_MIN, str[3]);
-        values.put(DbContract.UserEntry.COLUMN_NAME_TODO, str[4]);
-        if(Integer.parseInt(str[0])== R.id.save_button) {
-            // Insert record data from dialog input;
-            if (mDbHelper.insert(values) != -1) {
-                Log.d("onTodoDialogClick", "Insert Ok.");
-            } else {
-                Log.d("onTodoDialogClick", "Insert Not Ok.");
-            }
-        } else {
-            if(mDbHelper.update(values)!= 0){
-                Log.d("onTodoDialogClick", "Update Ok.");
-            } else {
-                Log.d("onTodoDialogClick", "Update Not Ok.");
-            }
-        }
-
         // Todo hour, min, todo content
-        TodoItem todo= new TodoItem(mDate, str[0], str[1], str[2], str[3]);
+        TodoItem todo= new TodoItem(keyDate, str[1], str[2], str[3], str[4]);
         // No todo at this date
         mTodos= new ArrayList<>();
         if(mData.get(keyDate)!= null){
@@ -305,6 +228,15 @@ public class Mission08Activity extends AppCompatActivity
         }
         mTodos.add(todo);
         mData.put(keyDate, mTodos);
+
+        if(Integer.parseInt(str[0])== R.id.save_button) {
+            // Insert record data from dialog input;
+            mFacade.addTodo( Calendar.getInstance(), todo);
+
+        } else {
+            mFacade.updateTodo(Calendar.getInstance(), todo);
+
+        }
 
         // List view operation
         mTodoAdapter= new TodoItemAdapter(getApplicationContext(), mTodos);
