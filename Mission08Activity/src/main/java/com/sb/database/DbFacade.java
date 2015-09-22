@@ -12,6 +12,7 @@ import com.sb.database.helper.DbHelper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,11 +36,11 @@ public class DbFacade {
      * @param todo
      * @return 성공, 실패
      */
-    public boolean addTodo(Calendar calendar, TodoItem todo) {
+    public boolean addTodo(Date date, TodoItem todo) {
         ContentValues values = new ContentValues();
 
         values.put(DbContract.DbEntry.COLUMN_NAME_TIME,
-                mFormat.format(calendar.getTime()));
+                mFormat.format(date));
         values.put(DbContract.DbEntry.COLUMN_NAME_HOUR, todo.getHour());
         values.put(DbContract.DbEntry.COLUMN_NAME_MIN, todo.getMin());
         values.put(DbContract.DbEntry.COLUMN_NAME_TODO, todo.getTodo());
@@ -50,10 +51,10 @@ public class DbFacade {
         ) != -1;
     }
 
-    public int updateTodo(Calendar calendar, TodoItem todo) {
+    public int updateTodo(Date date, TodoItem todo) {
         ContentValues values = new ContentValues();
         values.put(DbContract.DbEntry.COLUMN_NAME_TIME,
-                mFormat.format(calendar.getTime()));
+                mFormat.format(date));
         values.put(DbContract.DbEntry.COLUMN_NAME_HOUR, todo.getHour());
         values.put(DbContract.DbEntry.COLUMN_NAME_MIN, todo.getMin());
         values.put(DbContract.DbEntry.COLUMN_NAME_TODO, todo.getTodo());
@@ -70,8 +71,8 @@ public class DbFacade {
 
     }
 
-    public List<TodoItem> getTodo(Calendar calendar) {
-        String calStr = mFormat.format(calendar.getTime());
+    public List<TodoItem> getTodo(Date date) {
+        String calStr = mFormat.format(date);
 
         Cursor cursor = mHelper.getReadableDatabase().query(
                 DbContract.DbEntry.TABLE_NAME,

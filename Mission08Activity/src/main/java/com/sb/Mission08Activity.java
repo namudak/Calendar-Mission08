@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -127,6 +128,8 @@ public class Mission08Activity extends AppCompatActivity
 
         };
 
+
+
         // Setup Caldroid
         caldroidFragment.setCaldroidListener(listener);
 
@@ -137,6 +140,17 @@ public class Mission08Activity extends AppCompatActivity
         mTodoListView= (ListView)findViewById(R.id.todo_list_view);
         mTodoAdapter= new TodoItemAdapter(getApplicationContext(), mTodos);
         mTodoListView.setAdapter(mTodoAdapter);
+
+        mTodoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                List parm= new ArrayList();
+                parm.add("updateTodo");
+                parm.add(mDate);
+                parm.add(mTodos.get(position));
+                showDialog(parm);
+            }
+        });
 
         mDbHelper= DbHelper.getInstance(getApplicationContext());
         mFacade = new DbFacade(getApplicationContext());
@@ -231,10 +245,10 @@ public class Mission08Activity extends AppCompatActivity
 
         if(Integer.parseInt(str[0])== R.id.save_button) {
             // Insert record data from dialog input;
-            mFacade.addTodo( Calendar.getInstance(), todo);
+            mFacade.addTodo( mDate, todo);
 
         } else {
-            mFacade.updateTodo(Calendar.getInstance(), todo);
+            mFacade.updateTodo(mDate, todo);
 
         }
 

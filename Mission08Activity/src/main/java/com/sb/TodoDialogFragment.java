@@ -42,8 +42,8 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
         View view= inflater.inflate(R.layout.todoinput_dialog, container);
 
         Bundle bundle= getArguments();
-        List<String> strArray= bundle.getStringArrayList("parm");
-        mMode= strArray.get(0);
+        List<Object> objArray= (List<Object>) bundle.get("parm");
+        mMode= (String)objArray.get(0);
 
         mTodo = (EditText)view.findViewById(R.id.todo_edit_text);
         mHour = (EditText)view.findViewById(R.id.hour_edit_text);
@@ -60,13 +60,13 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
         mUpdateButton = (Button)view.findViewById(R.id.update_button);
         mUpdateButton.setOnClickListener(this);
 
-        if(mMode.equals("update")) {
-            mTodo.setText(strArray.get(1));
-            mHour.setText(strArray.get(2));
-            mMin.setText(strArray.get(3));
-            mWeather.check(Integer.parseInt(strArray.get(4)));
+        if(mMode.equals("updateTodo")) {
+            mTodo.setText( ((TodoItem)objArray.get(2)).getTodo() );
+            mHour.setText( ((TodoItem)objArray.get(2)).getHour() );
+            mMin.setText( ((TodoItem)objArray.get(2)).getMin() );
+            mWeather.check(Integer.parseInt(((TodoItem)objArray.get(2)).getWeather()));
             mSaveButton.setEnabled(false);
-        } else if(mMode.equals("add")){
+        } else if(mMode.equals("addTodo")){
             mUpdateButton.setEnabled(false);
         }
 
