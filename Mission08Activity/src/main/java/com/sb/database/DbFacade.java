@@ -34,13 +34,12 @@ public class DbFacade {
      *
      * @param calendar
      * @param todo
-     * @return 성공, 실패
+     * @return boolean for success or not
      */
     public boolean addTodo(Date date, TodoItem todo) {
         ContentValues values = new ContentValues();
 
-        values.put(DbContract.DbEntry.COLUMN_NAME_TIME,
-                mFormat.format(date));
+        values.put(DbContract.DbEntry.COLUMN_NAME_TIME, mFormat.format(date));
         values.put(DbContract.DbEntry.COLUMN_NAME_HOUR, todo.getHour());
         values.put(DbContract.DbEntry.COLUMN_NAME_MIN, todo.getMin());
         values.put(DbContract.DbEntry.COLUMN_NAME_TODO, todo.getTodo());
@@ -53,28 +52,37 @@ public class DbFacade {
 
     public int updateTodo(Date date, TodoItem todo) {
         ContentValues values = new ContentValues();
-        values.put(DbContract.DbEntry.COLUMN_NAME_TIME,
-                mFormat.format(date));
+        values.put(DbContract.DbEntry.COLUMN_NAME_TIME, mFormat.format(date));
         values.put(DbContract.DbEntry.COLUMN_NAME_HOUR, todo.getHour());
         values.put(DbContract.DbEntry.COLUMN_NAME_MIN, todo.getMin());
         values.put(DbContract.DbEntry.COLUMN_NAME_TODO, todo.getTodo());
         values.put(DbContract.DbEntry.COLUMN_NAME_WEATHER, todo.getWeather());
 
-        String selection = DbContract.DbEntry.COLUMN_NAME_TIME + "= ?";
-        String[] selectionArgs = {values.getAsString(DbContract.DbEntry.COLUMN_NAME_TIME)};
+        String selection =
+                DbContract.DbEntry.COLUMN_NAME_TIME + "= ? and "+
+                        DbContract.DbEntry.COLUMN_NAME_HOUR + "= ? and "+
+                        DbContract.DbEntry.COLUMN_NAME_MIN + "= ? ";
+
+        String[] selectionArgs = {
+                values.getAsString(DbContract.DbEntry.COLUMN_NAME_TIME),
+                values.getAsString(DbContract.DbEntry.COLUMN_NAME_HOUR),
+                values.getAsString(DbContract.DbEntry.COLUMN_NAME_MIN)
+        };
+
+
 
         return mHelper.update(
                 values,
                 selection,
                 selectionArgs);
 
-
     }
 
     public List<TodoItem> getTodo(Date date) {
         String calStr = mFormat.format(date);
 
-        Cursor cursor = mHelper.getReadableDatabase().query(
+        Cursor cursor;
+        cursor = mHelper.getReadableDatabase().query(
                 DbContract.DbEntry.TABLE_NAME,
                 DbContract.PROJECTION_ALL,
                 DbContract.DbEntry.COLUMN_NAME_TIME + "= ?",
@@ -86,12 +94,16 @@ public class DbFacade {
                 DbContract.DbEntry.COLUMN_NAME_TIME + " DESC"
         );
 
-        return cursorToList(cursor);
+        if(cursor!= null){
+            return cursorToList(cursor);
+        } else {
+            return null;
+        }
     }
 
     @NonNull
     private List<TodoItem> cursorToList(Cursor cursor) {
-        List<TodoItem> list = new ArrayList<>();
+        List<TodoItem> todolist = new ArrayList<>();
 
         cursor.moveToFirst();
         while (cursor.moveToNext()) {
@@ -107,9 +119,42 @@ public class DbFacade {
                     .getColumnIndexOrThrow(DbContract.DbEntry.COLUMN_NAME_TODO));
 
             TodoItem todoitem = new TodoItem(time, hour, minute, todo, weather);
-            list.add(todoitem);
+            todolist.add(todoitem);
         }
         cursor.close();
-        return list;
+
+        return todolist;
+    }
+
+    public int deleteTodo(Date date, TodoItem todo) {
+        ContentValues values = new ContentValues();
+        values.put(DbContract.DbEntry.COLUMN_NAME_TIME, mFormat.format(date));
+        values.put(DbContract.DbEntry.COLUMN_NAME_HOUR, todo.getHour());
+        values.put(DbContract.DbEntry.COLUMN_NAME_MIN, todo.getMin());
+
+        String selection= null;
+        String[] selectionArgs;
+        if(todo== null) {
+            selection =
+                    DbContract.DbEntry.COLUMN_NAME_TIME + "= ? ";
+
+            selectionArgs = new String[]{
+                    values.getAsString(DbContract.DbEntry.COLUMN_NAME_TIME)
+            };
+        } else {
+            selection =
+                    DbContract.DbEntry.COLUMN_NAME_TIME + "= ? and " +
+                            DbContract.DbEntry.COLUMN_NAME_HOUR + "= ? and " +
+                            DbContract.DbEntry.COLUMN_NAME_MIN + "= ? ";
+
+            selectionArgs = new String[]{
+                    values.getAsString(DbContract.DbEntry.COLUMN_NAME_TIME),
+                    values.getAsString(DbContract.DbEntry.COLUMN_NAME_HOUR),
+                    values.getAsString(DbContract.DbEntry.COLUMN_NAME_MIN)
+            };
+
+        }
+
+        return mHelper.delete(values, selection, selectionArgs);
     }
 }

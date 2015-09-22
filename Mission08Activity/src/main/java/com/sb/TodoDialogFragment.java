@@ -1,7 +1,5 @@
 package com.sb;
 
-//import android.app.DialogFragment;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -18,6 +16,7 @@ import android.widget.RadioGroup;
 import java.util.List;
 
 /**
+ *
  * Created by Administrator on 2015-09-06.
  */
 public class TodoDialogFragment extends DialogFragment implements View.OnClickListener {
@@ -64,9 +63,10 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
             mTodo.setText( ((TodoItem)objArray.get(2)).getTodo() );
             mHour.setText( ((TodoItem)objArray.get(2)).getHour() );
             mMin.setText( ((TodoItem)objArray.get(2)).getMin() );
-            mWeather.check(Integer.parseInt(((TodoItem)objArray.get(2)).getWeather()));
+            mWeather.check(Integer.parseInt(((TodoItem) objArray.get(2)).getWeather()));
             mSaveButton.setEnabled(false);
         } else if(mMode.equals("addTodo")){
+            mWeather.check(R.id.clear_RB);
             mUpdateButton.setEnabled(false);
         }
 
@@ -78,7 +78,6 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
         //getDialog().getWindow().setTitle("");
 
         // Set listener for Radiogroup
-        mWeather.check(R.id.clear_RB);
         mWeather.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

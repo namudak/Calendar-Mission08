@@ -21,8 +21,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     DbContract.DbEntry._ID+ " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     DbContract.DbEntry.COLUMN_NAME_TIME+ " TEXT NOT NULL," +
                     DbContract.DbEntry.COLUMN_NAME_WEATHER+ "," +
-                    DbContract.DbEntry.COLUMN_NAME_HOUR+ "," +
-                    DbContract.DbEntry.COLUMN_NAME_MIN+ " ," +
+                    DbContract.DbEntry.COLUMN_NAME_HOUR+ " TEXT NOT NULL," +
+                    DbContract.DbEntry.COLUMN_NAME_MIN+ " TEXT NOT NULL," +
                     DbContract.DbEntry.COLUMN_NAME_TODO+ ");";
 
     private DbHelper(Context context) {
@@ -59,8 +59,8 @@ public class DbHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(
                 DbContract.DbEntry.TABLE_NAME,     // The table to query
                 DbContract.PROJECTION_ALL,         // The columns to return
-                selection,//selection,             // The columns for the WHERE clause
-                selectionArgs,//selectionArgs,     // The values for the WHERE clause
+                selection,                         // The columns for the WHERE clause
+                selectionArgs,                     // The values for the WHERE clause
                 null,                              // group by- don't group the rows
                 null,                              // having- don't filter by row groups
                 null//sortOrder                    // order by- The sort order
@@ -94,11 +94,14 @@ public class DbHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public int delete(ContentValues values, String selection) {
+    public int delete(ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase db= getWritableDatabase();
 
         // Issue SQL statement.
-        int deleted= db.delete(DbContract.DbEntry.TABLE_NAME, selection, null);
+        int deleted= db.delete(
+                DbContract.DbEntry.TABLE_NAME,
+                selection,
+                selectionArgs);
 
         return deleted;
     }

@@ -6,7 +6,6 @@ import java.util.Date;
  * Created by student on 2015-09-11.
  */
 public class TodoItem {
-
     private String time;
     private String weather;
     private String hour;
