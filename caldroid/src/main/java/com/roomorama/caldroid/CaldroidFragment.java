@@ -185,7 +185,6 @@ public class CaldroidFragment extends DialogFragment {
      * textColorForDateMap holds color for text for each date
      */
     protected HashMap<DateTime, Integer> textColorForDateTimeMap = new HashMap<DateTime, Integer>();
-    ;
 
     /**
      * First column of calendar is Sunday

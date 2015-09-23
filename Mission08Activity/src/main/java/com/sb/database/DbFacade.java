@@ -51,22 +51,17 @@ public class DbFacade {
 
     public int updateTodo(Date date, TodoItem todo) {
         ContentValues values = new ContentValues();
-        values.put(DbContract.DbEntry.COLUMN_NAME_TIME, mFormat.format(date));
-        values.put(DbContract.DbEntry._ID, todo.getId());
         values.put(DbContract.DbEntry.COLUMN_NAME_HOUR, todo.getHour());
         values.put(DbContract.DbEntry.COLUMN_NAME_MIN, todo.getMin());
         values.put(DbContract.DbEntry.COLUMN_NAME_TODO, todo.getTodo());
         values.put(DbContract.DbEntry.COLUMN_NAME_WEATHER, todo.getWeather());
 
         String selection =
-                DbContract.DbEntry.COLUMN_NAME_TIME + "= ? and " +
                         DbContract.DbEntry._ID + "= ? ";
 
         String[] selectionArgs = {
-                values.getAsString(DbContract.DbEntry.COLUMN_NAME_TIME),
                 values.getAsString(DbContract.DbEntry._ID)
         };
-
 
         return mHelper.update(
                 values,

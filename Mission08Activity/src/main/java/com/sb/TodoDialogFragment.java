@@ -10,9 +10,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,16 +20,16 @@ import java.util.List;
  */
 public class TodoDialogFragment extends DialogFragment implements View.OnClickListener {
 
+    // "update" or "add"
     private String mMode;
+    // functional view except mId
     private int mId;
     private EditText mTodo;
     private EditText mHour;
     private EditText mMin;
     private RadioGroup mWeather;
-    private RadioButton mClear;
-    private RadioButton mCloud;
-    private RadioButton mRain;
-    private RadioButton mSnow;
+
+    // "save" "update"
     private Button mSaveButton;
     private Button mUpdateButton;
 
@@ -43,7 +43,8 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
         View view = inflater.inflate(R.layout.todoinput_dialog, container);
 
         Bundle bundle = getArguments();
-        List<Object> objArray = (List<Object>) bundle.get("parm");
+
+        List<Object> objArray = (ArrayList<Object>) bundle.get("parm");
         mMode = (String) objArray.get(0);
 
         mTodo = (EditText) view.findViewById(R.id.todo_edit_text);
@@ -51,10 +52,6 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
         mMin = (EditText) view.findViewById(R.id.min_edit_text);
 
         mWeather = (RadioGroup) view.findViewById(R.id.weather_RG);
-        mClear = (RadioButton) view.findViewById(R.id.clear_RB);
-        mCloud = (RadioButton) view.findViewById(R.id.cloud_RB);
-        mRain = (RadioButton) view.findViewById(R.id.rain_RB);
-        mSnow = (RadioButton) view.findViewById(R.id.snow_RB);
 
         mSaveButton = (Button) view.findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(this);
@@ -114,7 +111,7 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
     }
 
     public interface TodoDialogFragmentListener {
-        public void onTodoDialogClick(DialogFragment dialog, String result);
+        void onTodoDialogClick(DialogFragment dialog, String result);
     }
 
     TodoDialogFragmentListener todoDialogFragmentListener;

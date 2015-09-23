@@ -107,7 +107,7 @@ public class Mission08Activity extends AppCompatActivity
 
             @Override
             public void onLongClickDate(Date date, View view) {
-                mDate= date;
+                mDate = date;
                 // Event linking date item to dialog for delete
                 AlertDialog.Builder builder = new AlertDialog.Builder(Mission08Activity.this);
 
@@ -117,7 +117,7 @@ public class Mission08Activity extends AppCompatActivity
                         .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Add todos
-                                List<Object> parm = new ArrayList();
+                                List<Object> parm = new ArrayList<Object>();
                                 parm.add("addTodo");
                                 showDialog(parm);
                             }
@@ -170,7 +170,7 @@ public class Mission08Activity extends AppCompatActivity
                         .setCancelable(true)
                         .setPositiveButton("Modify", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                List<Object> parm = new ArrayList();
+                                List<Object> parm = new ArrayList<Object>();
                                 parm.add("updateTodo");
                                 parm.add(mDate);
                                 parm.add(mTodoAdapter.getItem(pos));
@@ -184,7 +184,7 @@ public class Mission08Activity extends AppCompatActivity
                                 } else {
                                     Log.d("LongClickListener", "deleteTodo failure!");
                                 }
-                                if(mFacade.getTodo(mDate).size()== 0) {
+                                if (mFacade.getTodo(mDate).size() == 0) {
                                     caldroidFragment.setBackgroundResourceForDate(R.color.caldroid_white, mDate);
                                     caldroidFragment.refreshView();
                                 }
@@ -262,11 +262,11 @@ public class Mission08Activity extends AppCompatActivity
         Bundle bundle = new Bundle();
         bundle.putSerializable("parm", (Serializable) parm);
 
-        // Show dialog for todo data input
+        // Show dialog for data input
         FragmentManager fm = getSupportFragmentManager();
         DialogFragment todoDialogFragment = new TodoDialogFragment();
         todoDialogFragment.setArguments(bundle);
-        todoDialogFragment.show(fm, "Todo Dialog");
+        todoDialogFragment.show(fm, "Todo DialogFragment");
     }
 
     /**
@@ -274,7 +274,6 @@ public class Mission08Activity extends AppCompatActivity
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        // TODO Auto-generated method stub
         super.onSaveInstanceState(outState);
 
         if (caldroidFragment != null) {
@@ -287,7 +286,7 @@ public class Mission08Activity extends AppCompatActivity
         String keyDate = formatter.format(mDate);
         String[] str = result.split(",");
 
-        // Todo hour, min, todo content
+        // hour, min, content
         TodoItem todo = new TodoItem(Integer.parseInt(str[1]),
                 keyDate, str[2], str[3], str[4], str[5]);
 

@@ -44,8 +44,6 @@ public abstract class CaldroidListener {
         // Do nothing
     }
 
-    ;
-
 
     /**
      * Inform client that CaldroidFragment view has been created and views are
