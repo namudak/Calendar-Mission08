@@ -16,12 +16,12 @@ import android.widget.RadioGroup;
 import java.util.List;
 
 /**
- *
  * Created by Administrator on 2015-09-06.
  */
 public class TodoDialogFragment extends DialogFragment implements View.OnClickListener {
 
     private String mMode;
+    private int mId;
     private EditText mTodo;
     private EditText mHour;
     private EditText mMin;
@@ -33,39 +33,43 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
     private Button mSaveButton;
     private Button mUpdateButton;
 
-    public TodoDialogFragment() {}
+    public TodoDialogFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view= inflater.inflate(R.layout.todoinput_dialog, container);
+        View view = inflater.inflate(R.layout.todoinput_dialog, container);
 
-        Bundle bundle= getArguments();
-        List<Object> objArray= (List<Object>) bundle.get("parm");
-        mMode= (String)objArray.get(0);
+        Bundle bundle = getArguments();
+        List<Object> objArray = (List<Object>) bundle.get("parm");
+        mMode = (String) objArray.get(0);
 
-        mTodo = (EditText)view.findViewById(R.id.todo_edit_text);
-        mHour = (EditText)view.findViewById(R.id.hour_edit_text);
-        mMin = (EditText)view.findViewById(R.id.min_edit_text);
+        mTodo = (EditText) view.findViewById(R.id.todo_edit_text);
+        mHour = (EditText) view.findViewById(R.id.hour_edit_text);
+        mMin = (EditText) view.findViewById(R.id.min_edit_text);
 
-        mWeather= (RadioGroup)view.findViewById(R.id.weather_RG);
-        mClear = (RadioButton)view.findViewById(R.id.clear_RB);
-        mCloud = (RadioButton)view.findViewById(R.id.cloud_RB);
-        mRain = (RadioButton)view.findViewById(R.id.rain_RB);
-        mSnow = (RadioButton)view.findViewById(R.id.snow_RB);
+        mWeather = (RadioGroup) view.findViewById(R.id.weather_RG);
+        mClear = (RadioButton) view.findViewById(R.id.clear_RB);
+        mCloud = (RadioButton) view.findViewById(R.id.cloud_RB);
+        mRain = (RadioButton) view.findViewById(R.id.rain_RB);
+        mSnow = (RadioButton) view.findViewById(R.id.snow_RB);
 
-        mSaveButton = (Button)view.findViewById(R.id.save_button);
+        mSaveButton = (Button) view.findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(this);
-        mUpdateButton = (Button)view.findViewById(R.id.update_button);
+        mUpdateButton = (Button) view.findViewById(R.id.update_button);
         mUpdateButton.setOnClickListener(this);
 
-        if(mMode.equals("updateTodo")) {
-            mTodo.setText( ((TodoItem)objArray.get(2)).getTodo() );
-            mHour.setText( ((TodoItem)objArray.get(2)).getHour() );
-            mMin.setText( ((TodoItem)objArray.get(2)).getMin() );
+        if (mMode.equals("updateTodo")) {
+            mId = ((TodoItem) objArray.get(2)).getId();
+            mTodo.setText(((TodoItem) objArray.get(2)).getTodo());
+            mHour.setText(((TodoItem) objArray.get(2)).getHour());
+            mMin.setText(((TodoItem) objArray.get(2)).getMin());
             mWeather.check(Integer.parseInt(((TodoItem) objArray.get(2)).getWeather()));
             mSaveButton.setEnabled(false);
-        } else if(mMode.equals("addTodo")){
+        } else if (mMode.equals("addTodo")) {
+            mId = -1;
             mWeather.check(R.id.clear_RB);
             mUpdateButton.setEnabled(false);
         }
@@ -95,7 +99,7 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.save_button:
                 doAction(R.id.save_button);
                 break;
@@ -116,12 +120,12 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
     TodoDialogFragmentListener todoDialogFragmentListener;
 
     @Override
-    public void onAttach(Activity activity){
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         try {
-            todoDialogFragmentListener= (TodoDialogFragmentListener)activity;
-        } catch (ClassCastException e){
+            todoDialogFragmentListener = (TodoDialogFragmentListener) activity;
+        } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() +
                     " must implement TodoDialgoFragmentListener");
         }
@@ -131,12 +135,13 @@ public class TodoDialogFragment extends DialogFragment implements View.OnClickLi
     public void doAction(int mode) {
         todoDialogFragmentListener.onTodoDialogClick(
                 TodoDialogFragment.this,
-                String.valueOf(mode)+ ","+
-                mHour.getText().toString()+ ","+
-                mMin.getText().toString()+ ","+
-                mTodo.getText().toString()+ ","+
-                String.valueOf(mWeather.getCheckedRadioButtonId()
-                )
+                String.valueOf(mode) + "," +
+                        String.valueOf(mId) + "," +
+                        mHour.getText().toString() + "," +
+                        mMin.getText().toString() + "," +
+                        mTodo.getText().toString() + "," +
+                        String.valueOf(mWeather.getCheckedRadioButtonId()
+                        )
 
         );
     }

@@ -34,7 +34,7 @@ public class TodoItemAdapter extends BaseAdapter {
      * @return View
      */
     public View getView(int position, View convertView, ViewGroup parent) {
-        String TIMEFORMAT= "%5s시:%5s분";
+        String TIMEFORMAT= "%s시:%s분";
         String TODOFORMST= "[%s]";
 
         TodoItemView itemView;

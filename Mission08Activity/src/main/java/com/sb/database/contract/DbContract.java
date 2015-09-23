@@ -9,6 +9,8 @@ import android.provider.BaseColumns;
 public final class DbContract {
 
     public static final String[] PROJECTION_ALL = new String[]{
+            DbEntry._ID,
+            DbEntry.COLUMN_NAME_TIME,
             DbEntry.COLUMN_NAME_TODO,
             DbEntry.COLUMN_NAME_HOUR,
             DbEntry.COLUMN_NAME_MIN,

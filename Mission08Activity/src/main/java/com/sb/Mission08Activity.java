@@ -29,15 +29,13 @@ import java.util.List;
 
 @SuppressLint("SimpleDateFormat")
 public class Mission08Activity extends AppCompatActivity
-                                implements TodoDialogFragment.TodoDialogFragmentListener {
+        implements TodoDialogFragment.TodoDialogFragmentListener {
 
     private CaldroidFragment caldroidFragment;
 
     private DbFacade mFacade;
     private DbHelper mDbHelper;
 
-
-    private List<TodoItem> mTodos;
     private ListView mTodoListView;
 
     private TodoItemAdapter mTodoAdapter;
@@ -85,24 +83,20 @@ public class Mission08Activity extends AppCompatActivity
         t.commit();
 
         // Setup listener
-        final CaldroidListener listener= new CaldroidListener() {
+        final CaldroidListener listener = new CaldroidListener() {
 
             @Override
             public void onSelectDate(Date date, View view) {
                 // Set member fileds as selected date
-                mDate= date;
-                List<TodoItem> todo= mFacade.getTodo(mDate);
-                if(todo!= null) {
+                mDate = date;
+                List<TodoItem> todo = mFacade.getTodo(mDate);
+                if (todo != null) {
                     mTodoAdapter = new TodoItemAdapter(getApplicationContext(), todo);
                     mTodoListView.setAdapter(mTodoAdapter);
 
                     // Refresh listview data
                     mTodoAdapter.notifyDataSetChanged();
                 }
-                // Add todos
-                List<Object> parm= new ArrayList();
-                parm.add("addTodo");
-                showDialog(parm);
             }
 
             @Override
@@ -113,24 +107,30 @@ public class Mission08Activity extends AppCompatActivity
 
             @Override
             public void onLongClickDate(Date date, View view) {
+                mDate= date;
                 // Event linking date item to dialog for delete
                 AlertDialog.Builder builder = new AlertDialog.Builder(Mission08Activity.this);
 
                 builder.setTitle("Dialog")
-                        .setMessage("Delete day todo?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setMessage("Add todo or Delete day todo?")
+                        .setCancelable(true)
+                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // Add todos
+                                List<Object> parm = new ArrayList();
+                                parm.add("addTodo");
+                                showDialog(parm);
+                            }
+                        })
+                        .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 if (mFacade.deleteTodo(mDate, null) > 0) {
                                     Log.d("LongClickListener", "deleteTodo success!");
+                                    caldroidFragment.setBackgroundResourceForDate(R.color.caldroid_white, mDate);
+                                    caldroidFragment.refreshView();
                                 } else {
                                     Log.d("LongClickListener", "deleteTodo failure!");
                                 }
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.cancel();
                             }
                         });
 
@@ -152,10 +152,8 @@ public class Mission08Activity extends AppCompatActivity
         caldroidFragment.setCaldroidListener(listener);
 
         // Set listview and adapter as linked
-        mTodos= new ArrayList<>();
-
-        mTodoListView= (ListView)findViewById(R.id.todo_list_view);
-        mTodoAdapter= new TodoItemAdapter(getApplicationContext(), mTodos);
+        mTodoListView = (ListView) findViewById(R.id.todo_list_view);
+        mTodoAdapter = new TodoItemAdapter(getApplicationContext(), new ArrayList<TodoItem>());
         mTodoListView.setAdapter(mTodoAdapter);
 
         // Event linking listview item to dialog for update
@@ -163,31 +161,35 @@ public class Mission08Activity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                final int pos= position;
+                final int pos = position;
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(Mission08Activity.this);
 
                 builder.setTitle("Dialog")
                         .setMessage("Modify or Delete todo?")
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .setPositiveButton("Modify", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                List<Object> parm= new ArrayList();
+                                List<Object> parm = new ArrayList();
                                 parm.add("updateTodo");
                                 parm.add(mDate);
-                                parm.add(mTodos.get(pos));
+                                parm.add(mTodoAdapter.getItem(pos));
                                 showDialog(parm);
                             }
                         })
                         .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                if (mFacade.deleteTodo(mDate, mTodos.get(pos)) > 0) {
+                                if (mFacade.deleteTodo(mDate, (TodoItem) mTodoAdapter.getItem(pos)) > 0) {
                                     Log.d("LongClickListener", "deleteTodo success!");
                                 } else {
                                     Log.d("LongClickListener", "deleteTodo failure!");
                                 }
-
-                                finish();
+                                if(mFacade.getTodo(mDate).size()== 0) {
+                                    caldroidFragment.setBackgroundResourceForDate(R.color.caldroid_white, mDate);
+                                    caldroidFragment.refreshView();
+                                }
+                                // Refresh listview data
+                                mTodoAdapter.notifyDataSetChanged();
                             }
                         });
 
@@ -196,41 +198,50 @@ public class Mission08Activity extends AppCompatActivity
             }
         });
 
-        mDbHelper= DbHelper.getInstance(getApplicationContext());
+        mDbHelper = DbHelper.getInstance(getApplicationContext());
         mFacade = new DbFacade(getApplicationContext());
 
     }
 
     /**
      * Set color for weekend
+     *
      * @param month
      * @param year
      */
     private void setWeekEndColor(int month, int year) {
         // Set color as blue and red for saturday, sunday respectively
-        Calendar cal= Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
 
-        if((month+ year)== 0) {
+        if ((month + year) == 0) {
             month = cal.get(Calendar.MONTH);
             year = cal.get(Calendar.YEAR);
         }
         cal.set(year, month - 1, 1);
 
+        List<TodoItem> todolist;
+        while (cal.get(Calendar.MONTH) == (month - 1)) {
+            todolist = mFacade.getTodo(cal.getTime());
+            if (todolist.size() > 0) {
+                // Set cell's color as selected having todos
+                caldroidFragment.setBackgroundResourceForDate(R.color.caldroid_light_red, cal.getTime());
+                caldroidFragment.refreshView();
+            }
 
-        while (cal.get(Calendar.MONTH)== (month- 1)) {
-            if( cal.get(Calendar.DAY_OF_WEEK)% 7== 1 ) {// Sunday
-                Date redDate= cal.getTime();
+            if (cal.get(Calendar.DAY_OF_WEEK) % 7 == 1) {// Sunday
+                Date redDate = cal.getTime();
                 caldroidFragment.setTextColorForDate(R.color.caldroid_light_red, redDate);
-            } else if ( cal.get(Calendar.DAY_OF_WEEK)% 7== 0 ) {// Saturday
-                Date blueDate= cal.getTime();
+            } else if (cal.get(Calendar.DAY_OF_WEEK) % 7 == 0) {// Saturday
+                Date blueDate = cal.getTime();
                 caldroidFragment.setTextColorForDate(R.color.caldroid_sky_blue, blueDate);
             }
             cal.add(Calendar.DATE, 1);
         }
+
     }
 
     /**
-     *  Initialize operation
+     * Initialize operation
      */
     private void setCustomResourceForDates() {
 
@@ -248,11 +259,11 @@ public class Mission08Activity extends AppCompatActivity
      * Show dialog for data input
      */
     private void showDialog(List<Object> parm) {
-        Bundle bundle= new Bundle();
+        Bundle bundle = new Bundle();
         bundle.putSerializable("parm", (Serializable) parm);
 
         // Show dialog for todo data input
-        FragmentManager fm= getSupportFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         DialogFragment todoDialogFragment = new TodoDialogFragment();
         todoDialogFragment.setArguments(bundle);
         todoDialogFragment.show(fm, "Todo Dialog");
@@ -273,15 +284,16 @@ public class Mission08Activity extends AppCompatActivity
 
     @Override
     public void onTodoDialogClick(DialogFragment dialog, String result) {
-        String keyDate= formatter.format(mDate);
-        String[] str= result.split(",");
+        String keyDate = formatter.format(mDate);
+        String[] str = result.split(",");
 
         // Todo hour, min, todo content
-        TodoItem todo= new TodoItem(keyDate, str[1], str[2], str[3], str[4]);
+        TodoItem todo = new TodoItem(Integer.parseInt(str[1]),
+                keyDate, str[2], str[3], str[4], str[5]);
 
-        if(Integer.parseInt(str[0])== R.id.save_button) {
+        if (Integer.parseInt(str[0]) == R.id.save_button) {
             // Insert record data from dialog input;
-            mFacade.addTodo( mDate, todo);
+            mFacade.addTodo(mDate, todo);
 
         } else {
             mFacade.updateTodo(mDate, todo);
@@ -289,8 +301,8 @@ public class Mission08Activity extends AppCompatActivity
         }
 
         // List view operation
-        List<TodoItem> todolist= mFacade.getTodo(mDate);
-        if(todolist!= null) {
+        List<TodoItem> todolist = mFacade.getTodo(mDate);
+        if (todolist != null) {
             mTodoAdapter = new TodoItemAdapter(getApplicationContext(), todolist);
             mTodoListView.setAdapter(mTodoAdapter);
 

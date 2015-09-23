@@ -8,7 +8,7 @@ import android.widget.TextView;
 /**
  * Created by student on 2015-09-11.
  */
-public class TodoItemView extends LinearLayout{
+public class TodoItemView extends LinearLayout {
 
     private TextView mTimeTextView;
     private TextView mTodoTextView;
@@ -20,22 +20,25 @@ public class TodoItemView extends LinearLayout{
     public TodoItemView(Context context, TodoItem aItem) {
         super(context);
 
-        LayoutInflater layoutInflater= (LayoutInflater)context.getSystemService(
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
 
         layoutInflater.inflate(R.layout.todoitem_listview, this, true);
 
-        mTimeTextView = (TextView)findViewById(R.id.time_text_view);
-        mTimeTextView.setText(aItem.getHour()+":"+ aItem.getMin());
-        mTodoTextView = (TextView)findViewById(R.id.todo_text_view);
+        mTimeTextView = (TextView) findViewById(R.id.time_text_view);
+        mTimeTextView.setText(aItem.getHour() + ":" + aItem.getMin());
+        mTodoTextView = (TextView) findViewById(R.id.todo_text_view);
         mTodoTextView.setText(aItem.getTodo());
     }
 
     // Set time editview as customed
     public void setTimeTextView(String time) {
-        mTimeTextView.setText(time);}
+        mTimeTextView.setText(time);
+    }
+
     // set todo editview as customed
     public void setTodoTextView(String todo) {
-        mTodoTextView.setText(todo);}
+        mTodoTextView.setText(todo);
+    }
 
 }
